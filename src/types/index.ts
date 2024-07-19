@@ -9,29 +9,38 @@ export interface IProduct { // Это объект - Товар, который 
         price: number;
     }
     
-    
-    export interface IOrder { // это объект - Заказ, изначально он пустой
-        payment: string;
-        email: string;
-        phone: string;
-        address: string;
-        total: IProductOrderPrice[];
-        items: IProductData; // это массив карточек, добавленных в корзинку
-        addOrderData() // добавляем данные в объект заказа
-        getTotal( IProductOrderPrice[] ): // получаем сумму заказанных товаров
-        setOrder(): // тут собираем все данные для отправления заказа на сервер
-        getOrder(): // метод возвращает данные, полученные с сервера после успешной отправки заказа
-        checkValidation(data: Record<keyof IOrderFormData, string>): boolean;
-    }
+export interface IBasket {
+    items: IProduct[]; 
+    preview: string | null; // указатель на тот товар, который мы хотим посмотреть 
+    total: IProductOrderPrice[];
+    addProduct(product: IProduct): void;
+    deleteProduct(productId: string, payload: Function | null): void;
+    getProduct(productId: string): IProduct;
+    getTotal( IProductOrderPrice[] ): // получаем сумму заказанных товаров
+}
+
+export interface IUserData {
+    payment: string;
+    email: string;
+    phone: string;
+    address: string;
+    addData() // добавляем данные в объект заказа
+    checkValidation(data: Record<keyof IOrderFormData, string>): boolean;
+}
+
+export interface IOrder { // это объект - Заказ, изначально он пустой
+    data: IUserData;
+    items: IBasket; // это массив карточек, добавленных в корзинку
+    setOrder(): // тут собираем все данные для отправления заказа на сервер
+    getOrder(): // метод возвращает данные, полученные с сервера после успешной отправки заказа
+}
      
     // Коллекция, каталог товаров
-    export interface IProductData { // это данные товаров и действия, которые мы можем с ними выполнять
-        products: IProduct[];
-        preview: string | null; // указатель на тот товар, который мы хотим посмотреть 
-        addProduct(product: IProduct): void;
-        deleteProduct(productId: string, payload: Function | null): void;
-        getProduct(productId: string): IProduct;
-    }
+export interface IProductData { // это данные товаров и действия, которые мы можем с ними выполнять
+    products: IProduct[];
+    preview: string | null; // указатель на тот товар, который мы хотим посмотреть       
+    getProduct(productId: string): IProduct;
+}
     
     export type IProductMainPage = Pick<IProduct, 'image' | 'title' | 'category' | 'price'>
     
