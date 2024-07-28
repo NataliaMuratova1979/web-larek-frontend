@@ -48,17 +48,18 @@ yarn build
 1. Это объект - Товар, который мы получаем с сервера
 Мы не можем редактировать эти данные
 Мы можем отображать товар, используя эти данные
-export interface IProduct {  
+ interface IProduct {  
         id: string;
         description: string;
         image: string;
         title: string;
         category: string;
         price: number;
+        ordered: boolean;
     }
     
 2. Это объект - Корзина, изначально он пустой. Мы можем добавлять и удалять товары, выбирать товар по id
-export interface IBasket {
+ interface IBasket {
     items: IProduct[]; 
     preview: string | null;
     total: IProductOrderPrice[];
@@ -69,7 +70,7 @@ export interface IBasket {
 }
 
 3. Это объект - Данные пользователя, которые мы будем вводить в форму, валидировать  и передавать на сервер
-export interface IUserData {
+ interface IUserData {
     payment: string;
     email: string;
     phone: string;
@@ -79,7 +80,7 @@ export interface IUserData {
 }
 
 4. Это объект - Заказ, изначально он пустой. Мы будем отраправлять его на сервер.
-export interface IOrder {
+ interface IOrder {
     data: IUserData;
     items: IBasket; // это массив карточек, добавленных в корзинку
     setOrder(): // тут собираем все данные для отправления заказа на сервер
@@ -87,23 +88,23 @@ export interface IOrder {
 }
      
     // Коллекция, каталог товаров
-5. export interface IProductData { // это данные товаров и действия, которые мы можем с ними выполнять
+5. interface IProductData { // это данные товаров и действия, которые мы можем с ними выполнять
     products: IProduct[];
     preview: string | null; // указатель на тот товар, который мы хотим посмотреть       
     getProduct(productId: string): IProduct;
 }
     
-6. export type IProductMainPage = Pick<IProduct, 'image' | 'title' | 'category' | 'price'>
+6. type IProductMainPage = Pick<IProduct, 'image' | 'title' | 'category' | 'price'>
     
-7. export type IProductPopup = Pick<IProduct, 'image' | 'title' | 'category' | 'price' | 'description'>
+7. type IProductPopup = Pick<IProduct, 'image' | 'title' | 'category' | 'price' | 'description'>
     
-8. export type IProductToAdd = Pick<IProduct, 'id' | 'title' | 'price' >
+8. type IProductToAdd = Pick<IProduct, 'id' | 'title' | 'price' >
      
-9. export type IProductOrderPrice = Pick<IProduct, 'price'> // Здесь должна быть цена выбранного товара
+9. type IProductOrderPrice = Pick<IProduct, 'price'> // Здесь должна быть цена выбранного товара
     
-10. export type IOrderFormData = Pick<IOrder, 'payment' | 'address' | 'email' | 'phone'> // Данные, вводимые в формы при оформлении заказа
+10. type IOrderFormData = Pick<IOrder, 'payment' | 'address' | 'email' | 'phone'> // Данные, вводимые в формы при оформлении заказа
     
-11. export type IOrderProducts = Pick<IOrder, 'items'> // Список товаров, добавленных в корзину
+11. type IOrderProducts = Pick<IOrder, 'items'> // Список товаров, добавленных в корзину
 
 ## Архитектура приложения
 
@@ -191,6 +192,7 @@ export interface IEvents {
 - _userdata: IUserData = объект данных с информацией о пользователе
 - total: IProductOrderedPrice[] - информация о сумме заказа
 - events: IEvent - экземпляр класса `EventEmitter`
+!!!!! - добавить поле completed (boolean) - отправлени или нет. 
 
 Также класс предоставляет набор методов для взаимодействия с этими данными.
 - addOrderData - добавляем данные в объект заказа
@@ -577,3 +579,29 @@ class Form extends Component {
 
 \
 
+
+
+
+Как искать общую стоимость товаров
+interface Item {
+  name: string;
+}
+
+const items: Item[] = [{ name: 'Яблоко' }, { name: 'Банан' }];
+
+function getPrice(item: Item): number | undefined {
+  if (item.price) {
+    return item.price;
+  } else {
+    // Если у товара нет свойства price, возвращаем undefined
+    return undefined;
+  }
+}
+
+// Использование функции getPrice для получения цены каждого товара
+const totalPrice = items
+  .map(getPrice)
+  .filter(Boolean) // Отфильтровываем неопределённые значения
+  .reduce((a, b) => a + b, 0);
+
+console.log(`Общая стоимость: ${totalPrice}`);
