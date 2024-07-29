@@ -1,16 +1,57 @@
-export interface IProductServerData { // Это объект - Товар, который мы получаем с сервера
-    // Мы можем отображать товар, используя эти данные
+export interface IProduct { // Это объект - Товар, который мы получаем с сервера
         id: string;
         description: string;
         image: string;
         title: string;
         category: string;
         price: number;
+        ordered?: boolean;
 }
 
-export interface IProduct extends IProductServerData {
-    ordered?: boolean;
+export interface IData {
+    total: number;
+    items: IProduct[]
 }
+
+    // Коллекция, каталог товаров
+export interface IProductsData { // это данные товаров и действия, которые мы можем с ними выполнять
+    products: IProduct[];
+    preview: string | null; // указатель на тот товар, который мы хотим посмотреть       
+    getProduct(productId: string): IProduct;
+    addProduct(product: IProduct): void;
+    deleteProduct(productId: string, payload: Function | null): void; 
+}
+
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+
+export interface IApi {
+    baseUrl: string;
+    get<T>(url: string): Promise<T>;
+    post<T>(url: string, data: object, method?: ApiPostMethods): Promise<T>;
+}
+
+
+
+
+
+//export type IProductCard = Pick<IProductServerData, 'id' | 'image'| 'title' | 'category' | 'price' | 'description'>
+
+
+
+
+/*
+export interface IToDoServerData {
+    id: number;
+    title: string;
+    completed: boolean;
+    userId: number;
+  }
+
+export type IToDoItem = Pick<IToDoServerData, 'id' | 'title' | 'completed'>
+*/
+
+
+
 
 export interface IBasket {
     items: IProduct[]; 
@@ -38,12 +79,7 @@ export interface IOrder { // это объект - Заказ, изначаль�
    // getOrder(): // метод возвращает данные, полученные с сервера после успешной отправки заказа
 }
      
-    // Коллекция, каталог товаров
-export interface IProductData { // это данные товаров и действия, которые мы можем с ними выполнять
-    products: IProduct[];
-    preview: string | null; // указатель на тот товар, который мы хотим посмотреть       
-    getProduct(productId: string): IProduct;
-}
+
     
     export type IProductMainPage = Pick<IProduct, 'image' | 'title' | 'category' | 'price'>
     

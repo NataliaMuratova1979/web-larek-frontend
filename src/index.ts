@@ -1,11 +1,28 @@
 import './scss/styles.scss';
-import { ProductModel } from './components/ProductModel';
-import { ProductApi } from './components/ProductApi';
-import { Page } from './components/Page';
 import { EventEmitter } from './components/base/events';
-import { ensureElement } from './utils/utils';
+import { ProductData } from './components/ProductData';
 
 
+import { AppApi } from './components/AppApi';
+import { Api } from './components/base/api'
+import { IApi } from './types'
+import { Page } from './components/Page';
+import { Card } from './components/Card';
+import { cloneTemplate, ensureElement } from './utils/utils';
+import { ProductsContainer } from './components/ProductsContainer';
+import { settings } from './utils/constants';
+import { API_URL } from './utils/constants';
+
+
+const events = new EventEmitter();
+const baseApi: IApi = new Api(API_URL, settings);
+const api = new AppApi(baseApi);
+
+const productData = new ProductData(events);
+
+const page = new Page(ensureElement('.page__wrapper'), events); // div, оборачивающий header и main
+
+// массив товаров, потом будет удален 
 const productExamples = [
     {
         "id": "854cef69-976d-4c2a-a18c-2aa45046c390",
@@ -89,32 +106,54 @@ const productExamples = [
     }
 ]
 
-const events = new EventEmitter();
+productData.products = productExamples;
+console.log(productData.getProduct("854cef69-976d-4c2a-a18c-2aa45046c390"));
+console.log(productData.getProducts);
+console.log(productData.getTotal);
+console.log(typeof productData);
+console.log(productData);
+productData.deleteProduct("854cef69-976d-4c2a-a18c-2aa45046c390");
+console.log(productData);
+productData.getTotal();
+console.log(productData.getTotal);
 
-const product = new ProductModel(events);
-const api = new ProductApi('https://larek-api.nomoreparties.co/api/weblarek')
-const page = new Page(ensureElement('.page__wrapper'));
+const total = productData.getTotal();
+console.log(total);
 
-api
-  .getProducts()
+const galleryCards = productData.getProducts();
+console.log(galleryCards);
+
+
+
+// Получаем карточки с сервера
+const promise = api.getProducts();
+
+promise
   .then((data) => {
-    product.setItems(data);
-    console.log('получилось загрузить товары с сервера');
-    console.log(product.getItems());
-  }
-  )
-  .catch(err => console.log(err));
+    console.log(data.total);
+    console.log(data.items);
+    productData.products = data.items;
+    console.log('что-то получилось ');
+    console.log(productData.products);
+    console.log('что-то получилось ');
+
+    events.emit('products:loaded');
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+
+  console.log('что-то получилось два');
+  console.log(productData.products);
+  console.log('что-то получилось два');
 
 
-  events.on('items: changed', () => {
-    console.log(product.getItems());
-    console.log('выводим в консоль по случаю события');
-})
 
 
-page.render(
-    {
-      //productList: HTMLElement[]; // DOM-элемент, где размещен список товаров 
-      productTotalNumber: 20,
-    }
-)
+
+
+
+
+
+
+
