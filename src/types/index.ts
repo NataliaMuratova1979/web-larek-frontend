@@ -17,7 +17,7 @@ export interface IData {
 export interface IProductsData { // это данные товаров и действия, которые мы можем с ними выполнять
     products: IProduct[];
     preview: string | null; // указатель на тот товар, который мы хотим посмотреть       
-    getProduct(productId: string): IProduct;
+    getProduct(productId: string): void;
     addProduct(product: IProduct): void;
     deleteProduct(productId: string, payload: Function | null): void; 
 }

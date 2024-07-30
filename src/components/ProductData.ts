@@ -37,8 +37,8 @@ export class ProductData implements IProductsData {
     }
 
     addProduct(product: IProduct) {
-        this._products = [...this._products, product]
-        this.events.emit('products:changed')        
+       this._products = [...this._products, product]
+       this.events.emit('products:changed')        
     }
 
     deleteProduct(productId: string, payload: Function | null = null) {
@@ -52,7 +52,7 @@ export class ProductData implements IProductsData {
     }
 
     getProduct(productId: string) {
-        return this.products.find((item) => item.id === productId)
+        return this._products.find((item) => item.id === productId)
     }
 
     getProducts() {

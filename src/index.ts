@@ -1,6 +1,8 @@
 import './scss/styles.scss';
 import { EventEmitter } from './components/base/events';
 import { ProductData } from './components/ProductData';
+import { IProduct, IProductsData } from "././types";
+
 
 
 import { AppApi } from './components/AppApi';
@@ -17,8 +19,6 @@ import { API_URL } from './utils/constants';
 const events = new EventEmitter();
 const baseApi: IApi = new Api(API_URL, settings);
 const api = new AppApi(baseApi);
-
-const productData = new ProductData(events);
 
 const page = new Page(ensureElement('.page__wrapper'), events); // div, оборачивающий header и main
 
@@ -106,47 +106,37 @@ const productExamples = [
     }
 ]
 
-productData.products = productExamples;
-console.log(productData.getProduct("854cef69-976d-4c2a-a18c-2aa45046c390"));
-console.log(productData.getProducts);
-console.log(productData.getTotal);
-console.log(typeof productData);
-console.log(productData);
-productData.deleteProduct("854cef69-976d-4c2a-a18c-2aa45046c390");
-console.log(productData);
-productData.getTotal();
-console.log(productData.getTotal);
 
-const total = productData.getTotal();
-console.log(total);
-
-const galleryCards = productData.getProducts();
-console.log(galleryCards);
-
-
+const productData = new ProductData(events);
 
 // Получаем карточки с сервера
 const promise = api.getProducts();
 
 promise
   .then((data) => {
-    console.log(data.total);
-    console.log(data.items);
     productData.products = data.items;
-    console.log('что-то получилось ');
-    console.log(productData.products);
-    console.log('что-то получилось ');
-
     events.emit('products:loaded');
+    console.log(productData.getProduct("854cef69-976d-4c2a-a18c-2aa45046c390"));
   })
   .catch((err) => {
     console.error(err);
   });
 
-  console.log('что-то получилось два');
-  console.log(productData.products);
-  console.log('что-то получилось два');
 
+
+
+
+
+
+
+
+   
+
+
+
+
+
+  
 
 
 
