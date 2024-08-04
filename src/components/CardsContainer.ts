@@ -1,4 +1,4 @@
-import { Component } from "./Component";
+import { Component } from "./base/Component";
 
 interface ICardsContainer {
     catalog: HTMLElement[];
@@ -13,7 +13,5 @@ export class CardsContainer extends Component<ICardsContainer>{
 
     set catalog(items: HTMLElement[]) {
         this.container.replaceChildren( ...items);
-    }
-
-   
+    }   
 }

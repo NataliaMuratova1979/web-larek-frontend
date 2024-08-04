@@ -1,6 +1,6 @@
 import { ensureElement, cloneTemplate } from "../utils/utils";
-//import { Component } from "./base/Component";
-import { Component } from "./Component";
+import { Component } from "./base/Component";
+//import { Component } from "./Component";
 
 import { IEvents } from "./base/events";
 import { IProductsData, IProduct } from "../types";
@@ -35,14 +35,12 @@ export class Card extends Component<IProduct> {
 
     
         //this._button.addEventListener('click', () => this.events.emit('card:delete', { card: this }))
-        this.container.addEventListener('click', () => this.events.emit('card:select', { card: this }))
+        this.container.addEventListener('click', () => this.events.emit('card:open', { card: this }))
 
     }
 
-
-
     render(productData: Partial<IProduct> | undefined ) { 
-        
+
         const { ...allProductData} = productData;
         Object.assign(this, allProductData); 
         return this.container;
@@ -91,12 +89,10 @@ export class Card extends Component<IProduct> {
     }
 */
 
-
     deleteCard() {
         this.container.remove();
        // this.element = null;
     }
-
      
 }
 // непонятно, что делать с кнопкой

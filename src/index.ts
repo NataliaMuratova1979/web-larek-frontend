@@ -8,9 +8,11 @@ import { IProduct, IProductsData } from "././types";
 import { AppApi } from './components/AppApi';
 import { Api } from './components/base/api'
 import { IApi } from './types'
-import { Page } from './components/Page';
+//import { Page } from './components/Page';
 import { Card } from './components/Card';
 import { CardsContainer } from './components/CardsContainer';
+import { BasketCounter } from './components/BasketCounter';
+
 
 
 //import { Card } from './components/Card';
@@ -26,7 +28,7 @@ const events = new EventEmitter();
 const baseApi: IApi = new Api(API_URL, settings);
 const api = new AppApi(baseApi);
 
-const page = new Page(ensureElement('.page__wrapper'), events); // div, оборачивающий header и main
+
 
 events.onAll((event) => {
     console.log(event.eventName, event.data)
@@ -44,7 +46,7 @@ promise
   .then((data) => {
     productData.products = data.items;
     console.log(productData);
-    events.emit('products:loaded');
+    events.emit('products:loaded'); // сгенерировали событие
     console.log(productData.getProduct("854cef69-976d-4c2a-a18c-2aa45046c390"));
     console.log(productData.getProduct("b06cde61-912f-4663-9751-09956c0eed67"));
 
@@ -71,13 +73,19 @@ cardArray.push(card2.render(productExamples[1]));
 
 galleryContainer.render({catalog:cardArray});
 
+const basketCounter = new BasketCounter(document.querySelector('.header__basket'), events);
 
+basketCounter.counter = 20;
+console.log(basketCounter);
 
-//gallerySection.append(card.render(productExamples[0]));
+events.on('products:loaded', () => {
+  const cardsArray = productData.products.map((card) => {
+    const cardInstant = new Card(cloneTemplate(cardTemplate), events);
+    return cardInstant.render(card);
+  });
 
-
-
-
+  galleryContainer.render({ catalog: cardsArray });
+});
 
 
 

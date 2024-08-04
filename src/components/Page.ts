@@ -2,10 +2,10 @@ import { ensureElement } from "../utils/utils"; // = querySelector
 import { Component } from "./base/Component";
 import { IEvents } from "./base/events";
 
-
+/*
 export interface IPage {
     catalog: HTMLElement[]; // DOM-элемент, где размещен список товаров 
-    counter: number; // количество товаров в корзине
+    counter?: number; // количество товаров в корзине
 }
 
 export class Page extends Component<IPage> implements IPage{
@@ -30,7 +30,8 @@ export class Page extends Component<IPage> implements IPage{
         this._catalog.replaceChildren(...items);
     }
     
-    set counter(value: number) {
-        this.setText(this._counter, Number(value));
-     }   
+    //set counter(value: number) {
+      //  this.setText(this._counter, Number(value));
+    // }   
 }
+    */
