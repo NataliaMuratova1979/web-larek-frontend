@@ -6,6 +6,7 @@ export interface IProduct { // Это объект - Товар, который 
         category: string;
         price: number;
         ordered?: boolean;
+        blocked?: boolean;
 }
 
 export interface IData {

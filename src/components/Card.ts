@@ -18,15 +18,13 @@ export class Card extends Component<IProduct> {
     protected _description?: HTMLElement;
     protected _price: HTMLElement;
     protected _id: string;
-    protected _ordered: boolean;
 
     constructor(protected container: HTMLElement, events: IEvents) {
         super(container);
  
         this.events = events;
-       // this.container = cloneTemplate(template);
     
-        //this._button = ensureElement('.DELETE', this.container) as HTMLButtonElement;
+        //this._button = this.container.querySelector('.basket__item-delete');
         this._image = this.container.querySelector('.card__image');
         this._category = this.container.querySelector('.card__category');
         this._title = this.container.querySelector('.card__title');
@@ -65,6 +63,18 @@ export class Card extends Component<IProduct> {
     //set description(description: string) {
         //this._description.textContent = description;
     //} 
+
+    set description(description: string) {
+       if (this._description === null) {
+       console.log('Здесь нет описания ')
+    } else {
+       this._description.textContent = description;
+    }
+    }
+    
+
+
+
    
     set price(price: number | null) {
       price ? this._price.textContent = price.toString() + ' синапсов' : this._price.textContent = 'Бесценно';
@@ -72,12 +82,53 @@ export class Card extends Component<IProduct> {
 
     set category(category: string) {
         this._category.textContent = category;
-    } 
+    }     
 
-    set ordered (ordered: boolean) {
-        this._ordered = ordered;
+
+    deleteCard() {
+        this.container.remove();
+       // this.element = null;
     }
      
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// непонятно, что делать с кнопкой
+// непонятно, что делать с картинкой
+
+/*
+set ordered (ordered: boolean) {
+    this._ordered = ordered;
+}
+
+get ordered() {
+    return this._ordered;
+}
+
+set blocked (blocked: boolean) {
+    if (this._price.textContent = 'Бесценно') {
+        this.blocked = true;
+    }
+}
+
+get blocked() {
+    return this.blocked;
+}
+    */
+
+
+
 /*
     isOrdered() {
         // return если уже в корзине
@@ -88,12 +139,3 @@ export class Card extends Component<IProduct> {
         // неактивна кнопка купить, если нет цены
     }
 */
-
-    deleteCard() {
-        this.container.remove();
-       // this.element = null;
-    }
-     
-}
-// непонятно, что делать с кнопкой
-// непонятно, что делать с картинкой

@@ -4,6 +4,7 @@ import { ProductData } from './components/ProductData';
 import { IProduct, IProductsData } from "././types";
 
 
+import { Modal } from './components/Modal';
 
 import { AppApi } from './components/AppApi';
 import { Api } from './components/base/api'
@@ -28,14 +29,9 @@ const events = new EventEmitter();
 const baseApi: IApi = new Api(API_URL, settings);
 const api = new AppApi(baseApi);
 
-
-
 events.onAll((event) => {
     console.log(event.eventName, event.data)
 })
-
-
-
 
 const productData = new ProductData(events);
 
@@ -60,13 +56,17 @@ promise
 const cardTemplate: HTMLTemplateElement =
 	document.querySelector('#card-catalog');
 
-  const galleryContainer = new CardsContainer(
+const cardModalTemplate: HTMLTemplateElement = document.querySelector('#card-preview');
+
+const galleryContainer = new CardsContainer(
     document.querySelector('.gallery')
-  );
+);
+
 
 const card1 = new Card(cloneTemplate(cardTemplate), events);
 const card2 = new Card(cloneTemplate(cardTemplate), events);
 const cardArray = [];
+
 
 cardArray.push(card1.render(productExamples[0]));
 cardArray.push(card2.render(productExamples[1]));
@@ -87,10 +87,55 @@ events.on('products:loaded', () => {
   galleryContainer.render({ catalog: cardsArray });
 });
 
+// Глобальные контейнеры
+const page = document.querySelector('.page');
+const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
+
+
+events.on('card:open', (data: { card: Card }) => {
+  console.log(data);
+  const { card } = data; 
+  console.log(card);
+  console.log(card.id);
+  const productModalData = productData.getProduct(card.id);
+  console.log(productModalData);
+  console.log(productModalData.description); 
+  //страница рендерит модальное окно
+  //модальное окно рендерит контент
+   
+  const cardModal = new Card(cloneTemplate(cardModalTemplate), events); 
+  console.log(card3);
+
+  modal.render({
+    content: cardModal.render(productModalData)
+  })
+});
 
 
 
 
+/*
+events.on('card:select', (data: { card: Card }) => {
+	const { card } = data;
+	const {name, link} = cardsData.getCard(card._id);
+	const image = {name, link}
+	imageModal.render({image})
+});
+*/
+
+
+
+
+
+//добавляем карточку в массив корзинки 
+/*
+this.container.addEventListener('click', (event) => {
+  if (event.target instanceof HTMLElement && event.target.classList.contains('card')) {
+    const card = event.target as HTMLElement;
+    this.addCardToArray({ id: card.id, title: card.title });
+  }
+});
+*/ 
 
 
 

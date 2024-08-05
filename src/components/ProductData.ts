@@ -84,3 +84,5 @@ export class ProductData implements IProductsData {
     //set impolssible -  если нет цены, в корзну не добавить 
 
 }
+
+
