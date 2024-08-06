@@ -1,6 +1,8 @@
 import './scss/styles.scss';
 import { EventEmitter } from './components/base/events';
 import { ProductData } from './components/ProductData';
+import { BasketData } from './components/BasketData';
+
 import { IProduct, IProductsData } from "././types";
 
 
@@ -25,7 +27,6 @@ import { productExamples } from './utils/tempConstants';
 
 
 const events = new EventEmitter();
-
 const baseApi: IApi = new Api(API_URL, settings);
 const api = new AppApi(baseApi);
 
@@ -33,7 +34,7 @@ events.onAll((event) => {
     console.log(event.eventName, event.data)
 })
 
-const productData = new ProductData(events);
+const productData = new ProductData(events); //это экземпляр класса, который содержит массив товаров, а также позволяет совершать действия с ними. Мы будем использовать его для хранения данных товаров, загруженных с сервера 
 
 // Получаем карточки с сервера
 const promise = api.getProducts();
@@ -41,11 +42,7 @@ const promise = api.getProducts();
 promise
   .then((data) => {
     productData.products = data.items;
-    console.log(productData);
     events.emit('products:loaded'); // сгенерировали событие
-    console.log(productData.getProduct("854cef69-976d-4c2a-a18c-2aa45046c390"));
-    console.log(productData.getProduct("b06cde61-912f-4663-9751-09956c0eed67"));
-
   })
   .catch((err) => {
     console.error(err);
@@ -62,21 +59,22 @@ const galleryContainer = new CardsContainer(
     document.querySelector('.gallery')
 );
 
-
+/*
 const card1 = new Card(cloneTemplate(cardTemplate), events);
 const card2 = new Card(cloneTemplate(cardTemplate), events);
 const cardArray = [];
-
-
 cardArray.push(card1.render(productExamples[0]));
 cardArray.push(card2.render(productExamples[1]));
 
 galleryContainer.render({catalog:cardArray});
+*/
+
 
 const basketCounter = new BasketCounter(document.querySelector('.header__basket'), events);
 
-basketCounter.counter = 20;
-console.log(basketCounter);
+//basketCounter.counter = 20;
+
+
 
 events.on('products:loaded', () => {
   const cardsArray = productData.products.map((card) => {
@@ -93,23 +91,58 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
 
 events.on('card:open', (data: { card: Card }) => {
-  console.log(data);
+  //console.log(data);
   const { card } = data; 
-  console.log(card);
-  console.log(card.id);
+ //console.log(card);
+  //console.log(card.id);
   const productModalData = productData.getProduct(card.id);
-  console.log(productModalData);
-  console.log(productModalData.description); 
-  //страница рендерит модальное окно
-  //модальное окно рендерит контент
+  //console.log(productModalData);
+  //console.log(productModalData.description); // все работает, в консоль выводится, ну это же просто замечательно 
+  
    
   const cardModal = new Card(cloneTemplate(cardModalTemplate), events); 
-  console.log(card3);
+  //console.log(cardModal);
 
   modal.render({
     content: cardModal.render(productModalData)
   })
 });
+
+
+const basketData = new BasketData(events); //данные товаров в корзине
+
+console.log('массив товаров корзины');
+console.log(basketData.products);
+basketData.products = [];
+console.log(basketData.products);
+
+console.log('массив товаров корзины');
+
+
+
+events.on('product:add', (data: { card: Card }) => {
+  console.log('данные корзины');
+  console.log(basketData);
+  
+
+  console.log(data);
+  const { card } = data; 
+  const basketItemData = productData.getProduct(card.id);
+  console.log('сейчас будут данные товара, который мы поместим в корзину')
+  console.log(basketItemData);
+
+  basketData.addProduct(basketItemData);
+  console.log('обновленный массив данных корзины');
+
+  console.log(basketData.products);
+  
+  //basketCounter.counter = basketData.getTotal; это должно быть в следующем событии basket:changed
+
+
+});
+
+
+
 
 
 

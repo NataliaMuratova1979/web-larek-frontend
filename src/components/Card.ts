@@ -11,30 +11,40 @@ export class Card extends Component<IProduct> {
     
     protected events: IEvents;
 
-    //protected _button?: HTMLButtonElement;
     protected _image?: HTMLImageElement;
     protected _category?: HTMLElement;
     protected _title: HTMLElement;
     protected _description?: HTMLElement;
     protected _price: HTMLElement;
     protected _id: string;
+    protected _deleteButton?: HTMLButtonElement;
+    protected _basketButton?: HTMLButtonElement;
+    protected _product: IProduct;
+
 
     constructor(protected container: HTMLElement, events: IEvents) {
         super(container);
  
         this.events = events;
     
-        //this._button = this.container.querySelector('.basket__item-delete');
+        this._deleteButton = this.container.querySelector('.basket__item-delete');
+        this._basketButton = this.container.querySelector('.card__button');
+
         this._image = this.container.querySelector('.card__image');
         this._category = this.container.querySelector('.card__category');
         this._title = this.container.querySelector('.card__title');
         this._description = this.container.querySelector('.card__text');
         this._price = this.container.querySelector('.card__price');
 
-    
-        //this._button.addEventListener('click', () => this.events.emit('card:delete', { card: this }))
-        this.container.addEventListener('click', () => this.events.emit('card:open', { card: this }))
+        if (this._basketButton) {
+            this._basketButton.addEventListener('click', () => this.events.emit('product:add', { card: this }));
+        }
 
+        if (this._deleteButton) {
+            this._deleteButton.addEventListener('click', () => this.events.emit('product:delete', { card: this }));
+        }                 
+
+        this.container.addEventListener('click', () => this.events.emit('card:open', { card: this }))
     }
 
     render(productData: Partial<IProduct> | undefined ) { 
@@ -42,7 +52,7 @@ export class Card extends Component<IProduct> {
         const { ...allProductData} = productData;
         Object.assign(this, allProductData); 
         return this.container;
-    }
+    }      
 
     set id (id) {
         this._id = id;
@@ -64,6 +74,7 @@ export class Card extends Component<IProduct> {
         //this._description.textContent = description;
     //} 
 
+/*
     set description(description: string) {
        if (this._description === null) {
        console.log('Здесь нет описания ')
@@ -71,11 +82,15 @@ export class Card extends Component<IProduct> {
        this._description.textContent = description;
     }
     }
-    
+*/
 
+    set description(description: string) {
+        if (this._description) {
+        this._description.textContent = description;
+    }
+    }
 
-
-   
+  
     set price(price: number | null) {
       price ? this._price.textContent = price.toString() + ' синапсов' : this._price.textContent = 'Бесценно';
     }   
