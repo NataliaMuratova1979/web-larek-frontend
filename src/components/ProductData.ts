@@ -59,6 +59,8 @@ export class ProductData implements IProductsData {
         return this._products;
       }
 
+    
+
     set preview(productId: string | null) {
         if (!productId) {
             this._preview = null;

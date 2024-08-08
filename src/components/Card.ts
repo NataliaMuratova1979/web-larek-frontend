@@ -20,6 +20,7 @@ export class Card extends Component<IProduct> {
     protected _deleteButton?: HTMLButtonElement;
     protected _basketButton?: HTMLButtonElement;
     protected _product: IProduct;
+    protected _index: HTMLElement; 
 
 
     constructor(protected container: HTMLElement, events: IEvents) {
@@ -35,6 +36,7 @@ export class Card extends Component<IProduct> {
         this._title = this.container.querySelector('.card__title');
         this._description = this.container.querySelector('.card__text');
         this._price = this.container.querySelector('.card__price');
+        this._index = this.container.querySelector('.basket__item-index');
 
         if (this._basketButton) {
             this._basketButton.addEventListener('click', () => this.events.emit('product:add', { card: this }));
@@ -52,7 +54,13 @@ export class Card extends Component<IProduct> {
         const { ...allProductData} = productData;
         Object.assign(this, allProductData); 
         return this.container;
-    }      
+    }    
+    
+    set index(index: number) {
+        if (this._index) {
+        this._index.textContent = index.toString();
+    }
+    }
 
     set id (id) {
         this._id = id;
@@ -67,7 +75,9 @@ export class Card extends Component<IProduct> {
     }  
 
     set image(image: string) {
+        if (this.image) {
         this._image.src = `url(${image})`;
+    }
     }
        
     //set description(description: string) {
@@ -83,6 +93,7 @@ export class Card extends Component<IProduct> {
     }
     }
 */
+  
 
     set description(description: string) {
         if (this._description) {
@@ -96,7 +107,9 @@ export class Card extends Component<IProduct> {
     }   
 
     set category(category: string) {
+        if (this._category) {
         this._category.textContent = category;
+    }
     }     
 
 

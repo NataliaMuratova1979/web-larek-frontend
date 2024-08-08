@@ -32,12 +32,14 @@ export class BasketData implements IProductsData {
     set products(products:IProduct[]) {
         this._products = products;
         this.events.emit('basket:changed')
-    }
-
-   
+    }   
 
     get products () {
         return this._products;
+    }
+
+    getProductIndex(product: IProduct): number {
+        return this._products.indexOf(product);
     }
 
     addProduct(product: IProduct) {
@@ -51,7 +53,7 @@ export class BasketData implements IProductsData {
         if(payload) {
             payload();
         } else {
-            this.events.emit('basket:changed')
+            this.events.emit('basket:open')
         }
     }
 
@@ -86,5 +88,7 @@ export class BasketData implements IProductsData {
     //set status - ordered или нет
 
     //set impolssible -  если нет цены, в корзну не добавить 
+
+    
 
 }
