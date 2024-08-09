@@ -38,6 +38,10 @@ export class BasketData implements IProductsData {
         return this._products;
     }
 
+    totalPrice(products: IProduct[]) {
+        return products.reduce((total, product) => total + product.price, 0);
+      }
+
     getProductIndex(product: IProduct): number {
         return this._products.indexOf(product);
     }
@@ -89,6 +93,6 @@ export class BasketData implements IProductsData {
 
     //set impolssible -  если нет цены, в корзну не добавить 
 
-    
+
 
 }

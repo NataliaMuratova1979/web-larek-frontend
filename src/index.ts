@@ -1,21 +1,22 @@
 import './scss/styles.scss';
-import { EventEmitter } from './components/base/events';
-import { ProductData } from './components/ProductData';
-import { BasketData } from './components/BasketData';
+import { EventEmitter } from './components/base/events'; // брокер событий
+import { ProductData } from './components/ProductData'; // данные - массив товаров
+import { BasketData } from './components/BasketData'; // данные - массив товаров в корзине
 
 import { IProduct, IProductsData } from "././types";
 
 
-import { Modal } from './components/Modal';
+import { Modal } from './components/Modal'; // отображение - модальное окно 
 
 import { AppApi } from './components/AppApi';
-import { Api } from './components/base/api'
-import { IApi } from './types'
-import { Page } from './components/Page';
-import { Card } from './components/Card';
-import { CardsContainer } from './components/CardsContainer';
-import { BasketCounter } from './components/BasketCounter';
+import { Api } from './components/base/api';
+import { IApi } from './types';
 
+import { Page } from './components/Page';
+import { Card } from './components/Card'; // отображение - одна карточка
+import { CardsContainer } from './components/CardsContainer'; // отображение - контейнер с карточками 
+import { BasketCounter } from './components/BasketCounter'; // отображение - цифра на корзинке
+import { Basket } from './components/Basket'; // отображение - открытая корзина 
 
 
 import { cloneTemplate, ensureElement } from './utils/utils';
@@ -47,7 +48,6 @@ promise
     console.error(err);
   });
 
-//const gallerySection = document.querySelector('.gallery');
 
 const cardTemplate: HTMLTemplateElement =
 	document.querySelector('#card-catalog'); // шаблон карточки в каталоге на главной странице
@@ -58,29 +58,8 @@ const galleryContainer = new CardsContainer(
   document.querySelector('.gallery'), events
 ); // контейнер галерея карточек на главной странице
 
-const basketContainer = new CardsContainer(
-document.querySelector('.basket__list'), events
-);
-
-const cardBasketTemplate: HTMLTemplateElement = document.querySelector('#card-basket');  // шаблон карточки внутри корзины  
 
 
-
-
-/*
-const card1 = new Card(cloneTemplate(cardTemplate), events);
-const card2 = new Card(cloneTemplate(cardTemplate), events);
-const cardArray = [];
-cardArray.push(card1.render(productExamples[0]));
-cardArray.push(card2.render(productExamples[1]));
-
-galleryContainer.render({catalog:cardArray});
-*/
-
-
-const basketCounter = new BasketCounter(document.querySelector('.header__basket'), events);
-
-//basketCounter.counter = 20;
 
 // Пользователь обновил страницу, данные товаров загрузились, отображаем их на странице
 
@@ -96,6 +75,7 @@ events.on('products:loaded', () => {
 // Глобальные контейнеры
 const page = document.querySelector('.page');
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
+const basketCounter = new BasketCounter(document.querySelector('.header__basket'), events);
 
 
 // Пользователь кликнул на карточку товара на главной странице. В модальном окне отрисовывается превью карточки. 
@@ -106,7 +86,7 @@ events.on('card:open', (data: { card: Card }) => {
   //console.log(card.id);
   const productModalData = productData.getProduct(card.id);
   //console.log(productModalData);
-  //console.log(productModalData.description); // все работает, в консоль выводится, ну это же просто замечательно 
+  //console.log(productModalData.description); 
   
    
   const cardModal = new Card(cloneTemplate(cardModalTemplate), events); 
@@ -129,7 +109,6 @@ events.on('product:add', (data: { card: Card }) => {
 
   basketData.addProduct(basketItemData); // обновленный массив данных корзины  
 
-
 });
 
 
@@ -146,38 +125,76 @@ events.on('basket:changed', () => { // обновляем значение сч�
 });
 
 
-// Пользователь кликнул на значок корзины на главной странице. Надо отрисовать модальное окно с содержимым. Событие basket:open прописано в файле Page.ts
+// Пользователь кликнул на значок корзины на главной странице. 
+// Надо отрисовать модальное окно с содержимым. Событие basket:open прописано в файле Page.ts
 // Пользователь удалил товар из корзинки. Надо заново отрисовать модальное окно с содержимым. 
+// Надо присвоить каждому cardBasket индекс, взяв его из basketData.products 
+// Надо посчитать сумму всех товаров в корзине
+
+const basketTemplate: HTMLTemplateElement = document.querySelector('#basket'); // это клон темплейта всей корзины
+
+const basket = new Basket(cloneTemplate(basketTemplate), events); // Это экземпляр класса  Basket, с его помощью будем отображать список товаров корзины, кнопку оформить и общую сумму
+
+const basketContainer = new CardsContainer(
+  document.querySelector('.basket__list'), events // это контейнер для карточек
+); // этот контейнер нам не пригодится 
+  
+const cardBasketTemplate: HTMLTemplateElement = document.querySelector('#card-basket');  // шаблон карточки внутри корзины  
+
+
 
 events.on('basket:open', () => { 
-  console.log('кликнули по корзинке');
-  const basketCardsArray = basketData.products.map((card, index) => {
+  // каждая карточка - клонируем шаблон <template id="card-basket">
+  // basket вмещает в себя контейнер для карточек, общую сумму и кнопку
+  // внутри modal рендерится basket (клонируем шаблон <template id="basket">)
+
+  basket.items = basketData.products.map((card, index) => {
   const cardBasket = new Card(cloneTemplate(cardBasketTemplate), events);
-
-  cardBasket.index = index + 1; // индекс равен порядковому номеру cardBasket в массиве плюс один
-
-  //надо присвоить каждому cardBasket индекс, взяв его из basketData.products 
- 
-  
+  cardBasket.index = index + 1; 
   return cardBasket.render(card);
+  // получили каждую карточку
+  // получили индекс каждой карточки 
+  // получили массив карточек basketCardsArray, который будет массивом items[] в классе Basket
 });
 
-modal.render({
-  content: basketContainer.render({ catalog: basketCardsArray})
+console.log('ниже массив карточек для корзины');
+console.log(basket.items);
+
+  const basketTotal = basketData.totalPrice(basketData.products);
+  basket.total = basketTotal;
+
+  console.log("ниже сумма заказанных товаров"); 
+  console.log(basketTotal);
+  // получили сумму заказанных товаров, которая будет присвоена total в классе Basket
+
+modal.render({ // отображаем содержимое в модальном окне
+  content: basket.render()  
+})
 })
 
-});
 
 //Пользователь кликнул на значок удаления товара из корзины. В классе Card срабатывает событие product:delete. В классе BasketData вызывается метод deleteProduct, после отработки которого возникате событие basket:open, которое заново отрисует модальное окно с товарами корзины
 
 events.on('product:delete', (data: { card: Card }) => {
 
   const { card } = data; 
-  const basketItemData = productData.getProduct(card.id);
+  const basketItemData = productData.getProduct(card.id); //??? должно быть basketData???
 
   basketData.deleteProduct(basketItemData.id); // обновленный массив данных корзины  
 
 });
+
+
+// Пользователь нажал на кнпку
+
+
+
+
+
+
+
+
+
 
 
 
@@ -207,7 +224,7 @@ events.on('products:loaded', () => {
 
 
 
-
+//КОРЗИНА
 
 /*
 const basketContainer = new CardsContainer(
@@ -227,5 +244,35 @@ events.on('card:select', (data: { card: Card }) => {
 	const {name, link} = cardsData.getCard(card._id);
 	const image = {name, link}
 	imageModal.render({image})
+});
+*/
+
+
+/*events.on('basket:open', () => { // здесь надо рендерить basketContainer
+  //рендерим карточки <template id="card-basket"> внутри <ul class="basket__list"></ul>
+  // рендерим <ul class="basket__list"></ul> внутри <template id="basket">
+  // рендерим <template id="basket"> внутри modal 
+
+  const basketCardsArray = basketData.products.map((card, index) => {
+  const cardBasket = new Card(cloneTemplate(cardBasketTemplate), events);
+
+  cardBasket.index = index + 1; 
+  
+  return cardBasket.render(card);
+});
+
+  const basketTotal = basketData.totalPrice(basketData.products);
+  console.log(basketTotal);
+  console.log("Выше сумма заказанных товаров"); 
+
+modal.render({
+
+  content: basketContainer.render({ 
+    catalog: basketCardsArray,
+    //totalBasket: 
+    //button: 
+  })
+})
+
 });
 */
