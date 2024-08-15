@@ -64,22 +64,39 @@ export interface IBasket {
    // getTotal( IProductOrderPrice[] ): // получаем сумму заказанных товаров
 }
 
-export interface IUserData {
-    payment: string;
-    email: string;
-    phone: string;
+export interface IUserContacts {
+    payment: "Онлайн" | "При получении";
     address: string;
    // addData() // добавляем данные в объект заказа
    // checkValidation(data: Record<keyof IOrderFormData, string>): boolean;
 }
 
+export interface IUserPayment {
+    email: string;
+    phone: string;
+   // addData() // добавляем данные в объект заказа
+   // checkValidation(data: Record<keyof IOrderFormData, string>): boolean;
+}
+
+export interface IUserData {
+    email: string;
+    phone: string;
+   // addData() // добавляем данные в объект заказа
+   // checkValidation(data: Record<keyof IOrderFormData, string>): boolean;
+}
+
+
+
+
+/*
 export interface IOrder { // это объект - Заказ, изначально он пустой
     data: IUserData;
+
     items: IBasket; // это массив карточек, добавленных в корзинку
    // setOrder(): // тут собираем все данные для отправления заказа на сервер
    // getOrder(): // метод возвращает данные, полученные с сервера после успешной отправки заказа
 }
-     
+   */  
 
     
     export type IProductMainPage = Pick<IProduct, 'image' | 'title' | 'category' | 'price'>
@@ -92,6 +109,6 @@ export interface IOrder { // это объект - Заказ, изначаль�
     
    // export type IOrderFormData = Pick<IOrder, 'payment' | 'address' | 'email' | 'phone'> // Данные, вводимые в формы при оформлении заказа
     
-    export type IOrderProducts = Pick<IOrder, 'items'> // Список товаров, добавленных в корзину
+    //export type IOrderProducts = Pick<IOrder, 'items'> // Список товаров, добавленных в корзину
     
     

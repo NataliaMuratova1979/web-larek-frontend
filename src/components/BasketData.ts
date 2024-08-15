@@ -92,7 +92,4 @@ export class BasketData implements IProductsData {
     //set status - ordered или нет
 
     //set impolssible -  если нет цены, в корзну не добавить 
-
-
-
 }
