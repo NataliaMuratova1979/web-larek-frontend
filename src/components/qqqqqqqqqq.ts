@@ -1,102 +1,70 @@
-import { Component } from "./base/Component";
-import { IEvents } from "./base/events";
+class YourClass {
+    private savedAddress: string = ''; // Свойство для хранения адреса
+    private isAddressValid: boolean = false; // Свойство для хранения валидности адреса
+    private container: HTMLElement; // Ваш контейнер
+    private input: HTMLInputElement; // Ваш элемент ввода
+    private selectedPayment: string; // Метод оплаты
+    private formName: string; // Имя формы
+    private events: { emit: (event: string, data: any) => void }; // Эмиттер событий
 
-interface IFormPaymentView {
-    input: string;
-    payment: string;
-    error: string;
-    valid: boolean;
-}
-
-export class FormPayment extends Component<IFormPaymentView> {
-    protected input: HTMLInputElement; // это инпут адрес
-    protected payments: NodeListOf<HTMLButtonElement>; // это кнопки оплаты
-    protected submitButton: HTMLButtonElement; // это кнопка сабмита
-    protected errorSpan: HTMLElement; // это спан ошибки
-    protected formName: string; // Это имя этой формы name="order"
-    
-    // Новые переменные для отслеживания состояния
-    protected isAddressValid: boolean = false;
-    protected selectedPayment: string | null = null;
-
-    constructor (container: HTMLElement, protected events: IEvents) {
-        super(container); 
+    constructor(container: HTMLElement, input: HTMLInputElement, formName: string, events: any) {
+        this.container = container;
+        this.input = input;
+        this.formName = formName;
         this.events = events;
-      
-        this.input = this.container.querySelector<HTMLInputElement>('input[name="address"]');
-        this.formName = this.container.getAttribute('name');
-        this.payments = this.container.querySelectorAll<HTMLButtonElement>('.button.order__buttons');
-        this.submitButton = this.container.querySelector('.order__button');
-        this.errorSpan = this.container.querySelector('.form__errors');
 
         this.container.addEventListener('input', (event: InputEvent) => {
             const target = event.target as HTMLInputElement;
-            const field = target.name;
             const value = target.value;
 
-            this.events.emit('address:input', { field, value });
+            // Сохраняем адрес
+            this.savedAddress = value;
+
+            console.log('получаем адрес');
+            console.log(this.savedAddress);
+            console.log('Успешно получили адрес');
+            console.log(value);
 
             // Проверяем валидность адреса
             this.isAddressValid = value.trim() !== '';
             this.updateSubmitButtonState();
+
+            // Эмитируем событие с сохраненным адресом
+            this.events.emit('address:input', { savedAddress: this.savedAddress });
         });
 
         this.container.addEventListener('submit', (evt) => {
             evt.preventDefault();
-            this.events.emit(`${this.formName}:submit`, this.getInputValue(this.input));
-        });
+            
+            // Используем savedAddress из класса
+            const address = this.savedAddress; 
+            console.log('тут должен быть адрес');
+            console.log(address);
+            console.log('тут должен быть адрес');
 
-        this.container.addEventListener('click', (event: MouseEvent) => {
-            const target = event.target as HTMLButtonElement;
+            const paymentMethod = this.selectedPayment;
 
-            // Проверяем, что целевой элемент действительно является кнопкой
-            if (target.tagName === 'BUTTON') {
-                console.log('нажали на кнопку');
-                console.log(target);
-                console.log(target.name);
+            console.log('Отправка данных:', { address, paymentMethod });
 
-                // Получаем текст кнопки
-                const value = target.textContent || '';
-                console.log(value);
-
-                // Вызываем getPaymentValue с текстом кнопки или её именем
-                const paymentValue = this.getPaymentValue(target);
-                console.log(paymentValue);
-                
-                // Запоминаем выбранный способ оплаты
-                this.selectedPayment = paymentValue;
-
-                // Эмитим событие с полученным значением
-                this.events.emit(`${target.name}:selected`, { value: paymentValue });
-
-                // Обновляем состояние кнопки отправки
-                this.updateSubmitButtonState();
-            }
+            this.events.emit(${this.formName}:submit, { address, paymentMethod });
         });
     }
 
-    set address(value: string) {   
-        this.input.value = value;
+    // Метод для получения значения из поля ввода
+    public getInputValue(): string {
+        return this.savedAddress;
     }
 
-    protected getInputValue(input: HTMLInputElement): string {
-        console.log(input.value);
-        console.log('получили адрес');
-        return input.value;
-    }
-
-    protected getPaymentValue(button: HTMLButtonElement): string {
-        console.log(button.textContent);
-        console.log('получили значение оплаты');
-        return button.textContent || '';
-    }
-
-    // Метод для обновления состояния кнопки отправки
-    private updateSubmitButtonState(): void {
-        if (this.isAddressValid && this.selectedPayment) {
-            this.submitButton.disabled = false; // Активируем кнопку
-        } else {
-            this.submitButton.disabled = true; // Деактивируем кнопку
-        }
+    // Пример метода для обновления состояния кнопки отправки
+    private updateSubmitButtonState() {
+        // Логика для обновления состояния кнопки отправки
     }
 }
+
+// Пример использования класса
+const inputContainer = document.getElementById('input-container'); // Получите ваш контейнер
+const inputElement = document.getElementById('input-field') as HTMLInputElement; // Ваш элемент ввода
+const formName = 'yourFormName'; // Имя вашей формы
+const events = { emit: (event: string, data: any) => console.log(event, data) }; // Эмиттер событий
+
+const yourClassInstance = new YourClass(inputContainer, inputElement, formName, events);

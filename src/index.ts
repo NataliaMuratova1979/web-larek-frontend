@@ -220,17 +220,7 @@ events.on('order:make', () => {
 
 
 
-
-const contactsFormTemplate: HTMLTemplateElement =
-	document.querySelector('#contacts'); // шаблон второй формы email и телефон
-
-  // const formContacts = new FormContacts(cloneTemplate(contactsFormTemplate), events); // при рендере пригодится
-
-
 // Открыть первую форму заказа formPayment
-
-
-
 
 const paymentFormTemplate: HTMLTemplateElement =
 	document.querySelector('#order'); 
@@ -250,6 +240,17 @@ events.on('formPayment:open', () => {
     })
   });
 });
+
+// Пользователь кликнул на кнопку Далее
+// Данные, полученные после заполнения формы, перемещаются в класс UserData
+
+
+
+
+const contactsFormTemplate: HTMLTemplateElement =
+	document.querySelector('#contacts'); // шаблон второй формы email и телефон
+
+  // const formContacts = new FormContacts(cloneTemplate(contactsFormTemplate), events); // при рендере пригодится
 
 
 
