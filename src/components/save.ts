@@ -17,10 +17,6 @@ export class FormPayment extends Component<IFormPaymentView> {
     protected errorSpan: HTMLElement; // это спан ошибки
     protected formName: string; // Это имя этой формы name="order"
 
-     // Новые переменные для отслеживания состояния
-     protected isAddressValid: boolean = false;
-     protected selectedPayment: string | null = null;
-
     constructor (container: HTMLElement, protected events: IEvents) {
         super(container); 
         this.events = events;
@@ -36,47 +32,34 @@ export class FormPayment extends Component<IFormPaymentView> {
             const target = event.target as HTMLInputElement;
             const field = target.name;
             const value = target.value;
-            
             this.events.emit(`address:input`, { field, value });
-
-            // Проверяем валидность адреса
-            this.isAddressValid = value.trim() !== '';
-            this.updateSubmitButtonState();
-            
         });
     
         this.container.addEventListener('submit', (evt) => {
             evt.preventDefault();
-            this.events.emit(`${this.formName}:submit`, this.getInputValue);
+           this.events.emit(`${this.formName}:submit`, this.getInputValue);
         });
     
         this.container.addEventListener('click', (event: MouseEvent) => {
             const target = event.target as HTMLButtonElement;
-        
             // Проверяем, что целевой элемент действительно является кнопкой
             if (target.tagName === 'BUTTON') {
-                console.log('нажали на кнопку');        
+                console.log('нажали на кнопку');
+    
+                const target = event.target as HTMLInputElement;
                 console.log(target);
                 console.log(target.name);
-        
-                // Получаем текст кнопки
-                    const value = target.textContent || '';
-                    console.log(value);
-
-                // Вызываем getPaymentValue с текстом кнопки или её именем
-                    const paymentValue = this.getPaymentValue(target); // или target.name, если нужно
-                    console.log(paymentValue);
-
-                    // Запоминаем выбранный способ оплаты
-                    this.selectedPayment = paymentValue;
-
-               // Эмитим событие с полученным значением
-                     this.events.emit(`${target.name}:selected`, { value: paymentValue });
-
-                     // Обновляем состояние кнопки отправки
-                    this.updateSubmitButtonState();
-                 }
-            });
+    
+                //Получаем текст кнопки
+                const value = target.textContent || '';
+                console.log(value);
+    
+                //const value = this.getPaymentValue();
+                //console.log(value);
+    
+               this.events.emit(`${target.name}:selected`, { target, value });         
+            };
+        });
     } 
     
     set address(value: string) {   
@@ -89,21 +72,13 @@ export class FormPayment extends Component<IFormPaymentView> {
         return input.value;
     };
 
-    protected getPaymentValue(button: HTMLButtonElement): string {
-        console.log(button.textContent);
-        console.log('получили значение оплаты');
-        return button.textContent || '';
-    }
 
-      // Метод для обновления состояния кнопки отправки
-      protected updateSubmitButtonState(): void {
-        if (this.isAddressValid && this.selectedPayment) {
-            this.submitButton.disabled = false; // Активируем кнопку
-        } else {
-            this.submitButton.disabled = true; // Деактивируем кнопку
-        }
-    }
-   
+    
+
+
+
+
+    
 }  
     
     
