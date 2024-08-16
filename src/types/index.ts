@@ -31,7 +31,10 @@ export interface IApi {
     post<T>(url: string, data: object, method?: ApiPostMethods): Promise<T>;
 }
 
-
+export interface IPaymentForm {
+    address: string;
+    payment: string;
+}
 
 
 
@@ -64,14 +67,14 @@ export interface IBasket {
    // getTotal( IProductOrderPrice[] ): // получаем сумму заказанных товаров
 }
 
-export interface IUserContacts {
-    payment: "Онлайн" | "При получении";
+export interface IUserPayment {
+    payment: string;
     address: string;
    // addData() // добавляем данные в объект заказа
    // checkValidation(data: Record<keyof IOrderFormData, string>): boolean;
 }
 
-export interface IUserPayment {
+export interface IUserContacts  {
     email: string;
     phone: string;
    // addData() // добавляем данные в объект заказа
@@ -83,6 +86,29 @@ export interface IUserData {
     phone: string;
    // addData() // добавляем данные в объект заказа
    // checkValidation(data: Record<keyof IOrderFormData, string>): boolean;
+}
+
+
+export interface IUserPayment { // это мы получаем из первой формы
+    address: string;
+    payment: string;
+}
+
+export interface IUser extends IUserPayment {
+    email: string;
+    phone: string;
+}
+
+export type FormErrors = Partial<Record<keyof IUser, string>>;
+
+
+export interface IOrderData { // это данные товаров и действия, которые мы можем с ними выполнять
+    basket: IProduct[];
+    userContacts: IUserContacts;
+    userPayment: IUserPayment;
+    //getProduct(productId: string): void;
+    //addProduct(product: IProduct): void;
+    //deleteProduct(productId: string, payload: Function | null): void;
 }
 
 

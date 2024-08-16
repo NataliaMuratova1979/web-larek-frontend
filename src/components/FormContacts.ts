@@ -1,28 +1,53 @@
 // Это класс отображения второй формы 
 
-/*
+
 import { Component } from "./base/Component";
 import { createElement } from "../utils/utils";
 
 import { IEvents } from "./base/events";
 
-// это класс отображения первой формы
+interface IFormPaymentView {
+    email: string;
+    phone: string;
+    error: string;
+    valid: boolean;
+}
 
+
+/*
 interface IFormState {
     valid: boolean;
     errors: string[];
 }
+*/
+/*
+export class FormContacts extends Component<IFormPaymentView> {
+    
+    
+    protected inputs: NodeListOf<HTMLInputElement>;
+    protected submitButton: HTMLButtonElement; // это кнопка сабмита
+    protected errorSpan: HTMLElement; // это спан ошибки
+    protected formName: string; // Это имя этой формы name="contacts"
+    
+    protected savedEmail: string = ''; //свойство для хранения почты
+    protected savedPhone: string = ''; //свойство для хранения телефона
 
-export class FormPayment<T> extends Component<IFormState> {
-    protected _submit: HTMLButtonElement;
-    protected _errors: HTMLElement;
+    protected isPhoneValid: boolean = false;
+    protected isEmailValid: boolean = false;
 
-    constructor(protected container: HTMLFormElement, protected events: IEvents) {
-        super(container);
+    constructor (container: HTMLElement, protected events: IEvents) {
+        super(container); 
+        this.events = events;
 
-        this._submit = ensureElement<HTMLButtonElement>('button[type=submit]', this.container);
-        this._errors = ensureElement<HTMLElement>('.form__errors', this.container);
 
+        this.inputs = this.container.querySelectorAll<HTMLInputElement>('.form__input');
+
+        this.formName = this.container.getAttribute('name');
+        this.submitButton = this.container.querySelector('.order__button');
+        this.errorSpan = this.container.querySelector('.form__errors');
+
+                
+        
         this.container.addEventListener('input', (e: Event) => {
             const target = e.target as HTMLInputElement;
             const field = target.name as keyof T;

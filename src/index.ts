@@ -2,6 +2,9 @@ import './scss/styles.scss';
 import { EventEmitter } from './components/base/events'; // брокер событий
 import { ProductData } from './components/ProductData'; // данные - массив товаров
 import { BasketData } from './components/BasketData'; // данные - массив товаров в корзине
+import { UserPaymentData } from './components/UserPaymentData';
+import { Payment } from './components/Payment'; // отображение - внутрянка первой формы
+
 
 import { OrderData } from './components/OrderData'; // данные - массив товаров в корзине
 //import { UserContactsData } from './components/UserContactsData'; // данные, полученные из второй формы
@@ -18,6 +21,8 @@ import { Modal } from './components/Modal'; // отображение - мода
 import { AppApi } from './components/AppApi';
 import { Api } from './components/base/api';
 import { IApi } from './types';
+import { IPaymentForm, IOrderData } from './types';
+
 
 import { Page } from './components/Page';
 import { Card } from './components/Card'; // отображение - одна карточка
@@ -47,7 +52,7 @@ events.onAll((event) => {
 
 const productData = new ProductData(events); //это экземпляр класса, который содержит массив товаров, а также позволяет совершать действия с ними. Мы будем использовать его для хранения данных товаров, загруженных с сервера 
 
-// Получаем карточки с сервера
+//------------------ Получаем карточки с сервера -----------------------
 const promise = api.getProducts();
 
 promise
@@ -93,9 +98,7 @@ const basketCounter = new BasketCounter(document.querySelector('.header__basket'
 events.on('card:open', (data: { card: Card }) => {
   const { card } = data; 
 
-  const productModalData = productData.getProduct(card.id);
- 
-  
+  const productModalData = productData.getProduct(card.id);  
    
   const cardModal = new Card(cloneTemplate(cardModalTemplate), events); 
   //console.log(cardModal);
@@ -105,29 +108,29 @@ events.on('card:open', (data: { card: Card }) => {
   })
 });
 
+//  ----------------- OrderData - класс данных заказа ----------------------
 
-const basketData = new BasketData(events); //данные товаров в корзине
-basketData.products = []; // инициируем пустой массив для будущих товаров
+const orderData = new OrderData(events); //данные товара попадают сразу в заказ в корзине
+orderData.basket = []; // инициируем пустой массив для будущих товаров
 
-// Пользователь добавил товар в корзину, обновляем массив данных товаров в корзине
+
+
+// Пользователь добавил товар в корзину, обновляем массив данных товаров в заказе 
 
 events.on('product:add', (data: { card: Card }) => {
   const { card } = data; 
   const basketItemData = productData.getProduct(card.id);
 
-  basketData.addProduct(basketItemData); // обновленный массив данных корзины  
-
+  orderData.addProduct(basketItemData); // обновленный массив данных корзины  
 });
-
-
 
 // Обновился массив данных в корзине, обновляем значение счетчика на корзинке
 // Каждый товар в корзинке должен получить актуальный индекс
 
 events.on('basket:changed', () => { // обновляем значение счётчика при изменении данных корзины
-  basketCounter.counter = basketData.getTotal();
-  console.log(basketData);  
-  console.log(basketData.products);
+  basketCounter.counter = orderData.getTotal();
+  console.log(orderData);  
+  console.log(orderData.basket);
 
 });
 
@@ -156,7 +159,7 @@ events.on('basket:open', () => {
   // basket вмещает в себя контейнер для карточек, общую сумму и кнопку
   // внутри modal рендерится basket (клонируем шаблон <template id="basket">)
 
-  basket.items = basketData.products.map((card, index) => {
+  basket.items = orderData.basket.map((card, index) => {
   const cardBasket = new Card(cloneTemplate(cardBasketTemplate), events);
   cardBasket.index = index + 1; 
   return cardBasket.render(card);
@@ -168,7 +171,7 @@ events.on('basket:open', () => {
 console.log('ниже массив карточек для корзины');
 console.log(basket.items);
 
-  const basketTotal = basketData.totalPrice(basketData.products);
+  const basketTotal = orderData.totalPrice(orderData.basket);
   basket.total = basketTotal;
 
   console.log("ниже сумма заказанных товаров"); 
@@ -188,7 +191,7 @@ events.on('product:delete', (data: { card: Card }) => {
   const { card } = data; 
   const basketItemData = productData.getProduct(card.id); //??? должно быть basketData???
 
-  basketData.deleteProduct(basketItemData.id); // обновленный массив данных корзины  
+  orderData.deleteProduct(basketItemData.id); // обновленный массив данных корзины  
 
 });
 
@@ -203,9 +206,9 @@ order.basket = []; // инициируем массив для товаров
 
 events.on('order:make', () => {
   console.log('ниже товары корзины'); 
-  console.log(basketData.products);
+ // console.log(basketData.products);
 
-  order.basket = basketData.products;
+  //order.basket = basketData.products;
   console.log('ниже товары заказа'); 
   console.log(order.basket);
 }
@@ -214,10 +217,7 @@ events.on('order:make', () => {
 // В классе OrderData сработало событие 'formPayment:open'
 // Необходимо отрисовать форму заполнения данных 
 // Создаем класс отображения formPayment
-// После заполнения данные попадут в класс UserData
-
-
-
+// После заполнения данные попадут в класс UserPaymentData
 
 
 // Открыть первую форму заказа formPayment
@@ -227,22 +227,84 @@ const paymentFormTemplate: HTMLTemplateElement =
   // шаблон первой формы способ оплаты и адрес доставки
 console.log(paymentFormTemplate);
 
+const payment = new Payment(cloneTemplate(paymentFormTemplate), events);
+
+// открыть первую форму 
 events.on('formPayment:open', () => {
-
-  const formPayment = new FormPayment(cloneTemplate(paymentFormTemplate), events);
-
   modal.render({
-    content: formPayment.render({
-      input: '',
+    content: payment.render({
+      address: '',
       payment: '',
       valid: false,
-      error: ''
+      errors: []
     })
   });
 });
 
+// Изменилось одно из полей
+events.on(/^order\..*:change/, (data: { field: keyof IPaymentForm, value: string }) => {
+  console.log('изменилось одно из полей');
+  order.setPaymentField(data.field, data.value);
+});
+
+// Изменилось состояние валидации формы
+events.on('formErrors:change', (errors: Partial<IPaymentForm>) => {
+  const { payment, address } = errors;
+  payment.valid = !payment && !address;
+  payment.errors = Object.values({payment, address}).filter(i => !!i).join('; ');
+});
+
+
+
+
+
+
 // Пользователь кликнул на кнопку Далее
-// Данные, полученные после заполнения формы, перемещаются в класс UserData
+// Произошло событие order:submit (в классе FormPayment)
+// Данные, полученные после заполнения формы, перемещаются в класс UserPaymentData
+
+const userPaymentData = new UserPaymentData(events);
+
+
+events.on('order:submit', (data) => {
+
+  const paymentData = data as { address: string; paymentMethod: string };
+
+  console.log(paymentData);
+  console.log(paymentData.address);  
+  console.log(paymentData.paymentMethod);
+  console.log('получили объект с данными');
+ 
+  console.log('присвоили данные полям класса');
+  userPaymentData.address = paymentData.address;
+  userPaymentData.payment = paymentData.paymentMethod;
+  console.log('присвоили данные полям класса');
+
+  console.log('userPaymentData.address:', userPaymentData.address);
+  console.log('userPaymentData.payment:', userPaymentData.payment);
+});
+
+// В классе UserPaymentData сработало событие 'formcontats:open'
+// Необходимо отрисовать вторую форму заполнения данных 
+// Создаем класс отображения FormContacts
+// После заполнения данные попадут в класс UserContactsData
+
+
+// Открыть первую форму заказа formPayment
+
+
+events.on('formContacts:open', () => {
+  console.log('пора открывать следующую форму');
+});
+
+
+
+
+
+
+
+
+
 
 
 

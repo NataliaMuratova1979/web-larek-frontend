@@ -40,7 +40,7 @@ export class BasketData implements IProductsData {
 
     totalPrice(products: IProduct[]) {
         return products.reduce((total, product) => total + product.price, 0);
-      }
+      } // перенесли в класс orderData
 
     getProductIndex(product: IProduct): number {
         return this._products.indexOf(product);
@@ -86,7 +86,7 @@ export class BasketData implements IProductsData {
     }
 
     getTotal() {
-        return this._products.length;
+        return this._products.length; // меняем на _basket
     }
 
     //set status - ordered или нет

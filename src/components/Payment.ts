@@ -1,7 +1,9 @@
-export interface IPaymentForm {
-    address: string;
-    payment: string;
-}
+import { FormPayment } from "./FormPayment";
+import { IEvents } from "./base/events";
+import {ensureElement} from "../utils/utils";
+import { IPaymentForm } from '../types';
+
+
 
 export class Payment extends FormPayment<IPaymentForm> {
     constructor(container: HTMLFormElement, events: IEvents) {
@@ -40,4 +42,6 @@ export class Payment extends FormPayment<IPaymentForm> {
             this.payment = 'card'; // Устанавливаем значение при нажатии кнопки
         });
     }
+
+  
 }
