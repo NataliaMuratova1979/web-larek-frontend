@@ -227,12 +227,12 @@ const paymentFormTemplate: HTMLTemplateElement =
   // шаблон первой формы способ оплаты и адрес доставки
 console.log(paymentFormTemplate);
 
-const payment = new Payment(cloneTemplate(paymentFormTemplate), events);
+const payments = new Payment(cloneTemplate(paymentFormTemplate), events);
 
 // открыть первую форму 
 events.on('formPayment:open', () => {
   modal.render({
-    content: payment.render({
+    content: payments.render({
       address: '',
       payment: '',
       valid: false,
@@ -241,17 +241,20 @@ events.on('formPayment:open', () => {
   });
 });
 
-// Изменилось одно из полей
-events.on(/^order\..*:change/, (data: { field: keyof IPaymentForm, value: string }) => {
+// Изменилось одно из полей. событие происходит в файле FormPayment
+events.on(/^order\..*?:change$/, (data: { field: keyof IPaymentForm, value: string }) => {
   console.log('изменилось одно из полей');
   order.setPaymentField(data.field, data.value);
+  console.log(data);
 });
+
+
 
 // Изменилось состояние валидации формы
 events.on('formErrors:change', (errors: Partial<IPaymentForm>) => {
   const { payment, address } = errors;
-  payment.valid = !payment && !address;
-  payment.errors = Object.values({payment, address}).filter(i => !!i).join('; ');
+  payments.valid = !payment && !address;
+  payments.errors = Object.values({payment, address}).filter(i => !!i).join('; ');
 });
 
 

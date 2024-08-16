@@ -8,8 +8,7 @@ import { IPaymentForm } from '../types';
 export class Payment extends FormPayment<IPaymentForm> {
     constructor(container: HTMLFormElement, events: IEvents) {
         super(container, events);
-        this.initPaymentButtons();
-    }
+            }
 
     set address(value: string) {
         (this.container.elements.namedItem('address') as HTMLInputElement).value = value;
@@ -19,6 +18,17 @@ export class Payment extends FormPayment<IPaymentForm> {
         // Устанавливаем значение в поле payment
         const cashButton = this.container.elements.namedItem('cash') as HTMLButtonElement;
         const cardButton = this.container.elements.namedItem('card') as HTMLButtonElement;
+     
+
+        cashButton.addEventListener('click', () => {
+            console.log('кликнули на кнопку выбора способа оплаты');
+            this.payment = 'cash'; // Устанавливаем значение при нажатии кнопки
+        });
+
+        cardButton.addEventListener('click', () => {
+            console.log('кликнули на кнопку выбора способа оплаты');
+            this.payment = 'card'; // Устанавливаем значение при нажатии кнопки
+        });
 
         // Обновляем состояние кнопок
         if (value === 'cash') {
@@ -30,18 +40,9 @@ export class Payment extends FormPayment<IPaymentForm> {
         }
     }
 
-    private initPaymentButtons() {
-        const cashButton = this.container.elements.namedItem('cash') as HTMLButtonElement;
-        const cardButton = this.container.elements.namedItem('card') as HTMLButtonElement;
 
-        cashButton.addEventListener('click', () => {
-            this.payment = 'cash'; // Устанавливаем значение при нажатии кнопки
-        });
 
-        cardButton.addEventListener('click', () => {
-            this.payment = 'card'; // Устанавливаем значение при нажатии кнопки
-        });
-    }
+
+}
 
   
-}

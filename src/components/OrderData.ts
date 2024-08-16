@@ -49,8 +49,6 @@ export interface IOrderData { // это данные товаров и дейс�
 }
 
 
-
-
 export class OrderData implements IOrderData {
      _basket: IProduct[];    
     userPayment: IUserPayment = {

@@ -25,16 +25,18 @@ export class FormPayment<T> extends Component<IFormState> {
             this.onInputChange(field, value);            
         });
 
-        this.container.addEventListener('click', (e: Event) => {
-            const target = e.target as HTMLElement;         
-            // Проверяем, что кликнули именно на кнопку с классом button_alt
-            if (target.classList.contains('button_alt')) {
-                const paymentMethod = target.getAttribute('name'); 
-                // Получаем значение атрибута name
-                this.onPaymentMethodChange(paymentMethod);
-            }
-        });
+        const paymentButtons = this.container.querySelectorAll('.order__buttons .button');
 
+        paymentButtons.forEach(button => {
+            button.addEventListener('click', (e: Event) => {
+                const target = e.target as HTMLButtonElement;
+                const field = 'payment' as keyof T; // Укажите имя поля, которое вы хотите использовать
+                const value = target.textContent; // Получаем текст кнопки как значение
+                
+                this.onInputChange(field, value); // Вызов метода с полем и значением
+            });
+        });
+        
         this.container.addEventListener('submit', (e: Event) => {
             e.preventDefault();
             this.events.emit(`${this.container.name}:submit`);
@@ -46,15 +48,19 @@ export class FormPayment<T> extends Component<IFormState> {
             field,
             value
         });
-    }
+    } //событие отслеживается в файле index.ts
 
-    protected onPaymentMethodChange(method: string | null) {
-        if (method) {
-            this.events.emit(`${this.container.name}.${method}:change`, {
-                method
+    /*protected onPaymentMethodChange(field: keyof T, value: string | null) {
+        if (value) {
+            console.log(field, value);
+            this.events.emit(`${this.container.name}.${String(field)}:change`, {
+                field,
+                value
             });
         }
-    }
+    } // событие отслеживается в файле index.ts */
+    
+
     
     set valid(value: boolean) {
         this._submit.disabled = !value;

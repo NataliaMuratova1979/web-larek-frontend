@@ -1,43 +1,18 @@
-export interface IPaymentForm {
-    address: string;
-    payment: string;
-}
+this.container.addEventListener('input', (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const field = target.name as keyof T;
+    const value = target.value;
+    this.onInputChange(field, value);            
+});
 
-export class Payment extends FormPayment<IPaymentForm> {
-    constructor(container: HTMLFormElement, events: IEvents) {
-        super(container, events);
-        this.initPaymentButtons();
-    }
+// Обработчик для кнопок "Онлайн" и "При получении"
+const paymentButtons = this.container.querySelectorAll('.order__buttons .button');
 
-    set address(value: string) {
-        (this.container.elements.namedItem('address') as HTMLInputElement).value = value;
-    }
-
-    set payment(value: string) {
-        // Устанавливаем значение в поле payment
-        const cashButton = this.container.elements.namedItem('cash') as HTMLButtonElement;
-        const cardButton = this.container.elements.namedItem('card') as HTMLButtonElement;
-
-        // Обновляем состояние кнопок
-        if (value === 'cash') {
-            cashButton.classList.add('active');
-            cardButton.classList.remove('active');
-        } else if (value === 'card') {
-            cardButton.classList.add('active');
-            cashButton.classList.remove('active');
-        }
-    }
-
-    private initPaymentButtons() {
-        const cashButton = this.container.elements.namedItem('cash') as HTMLButtonElement;
-        const cardButton = this.container.elements.namedItem('card') as HTMLButtonElement;
-
-        cashButton.addEventListener('click', () => {
-            this.payment = 'cash'; // Устанавливаем значение при нажатии кнопки
-        });
-
-        cardButton.addEventListener('click', () => {
-            this.payment = 'card'; // Устанавливаем значение при нажатии кнопки
-        });
-    }
-}
+paymentButtons.forEach(button => {
+    button.addEventListener('click', (e: Event) => {
+        const target = e.target as HTMLButtonElement;
+        const field = 'paymentMethod' as keyof T; // Укажите имя поля, которое вы хотите использовать
+        const value = target.textContent; // Получаем текст кнопки как значение
+        this.onInputChange(field, value); // Вызов метода с полем и значением
+    });
+});
