@@ -17,13 +17,18 @@ export class Card extends Component<IProduct> {
     protected _description?: HTMLElement;
     protected _price: HTMLElement;
     protected _id: string;
+
+    protected _ordered: boolean; // это поле для проверки, является ли товар уже заказанным 
+
+
+
     protected _deleteButton?: HTMLButtonElement;
     protected _basketButton?: HTMLButtonElement;
     protected _product: IProduct;
     protected _index: HTMLElement;  
 
-     // Новое поле для управления состоянием кнопки
-     protected _isBasketButtonDisabled: boolean = false;
+     // Новое поле для управления состоянием кнопки 
+    protected _isBasketButtonDisabled: boolean = false;
 
     constructor(protected container: HTMLElement, events: IEvents) {
         super(container);
@@ -112,7 +117,7 @@ export class Card extends Component<IProduct> {
         // Обновляем состояние кнопки
         if (this._basketButton) {
             this._basketButton.disabled = this._isBasketButtonDisabled; // Устанавливаем состояние кнопки
-            this._basketButton.textContent = this._isBasketButtonDisabled ? 'Недоступно' : 'Добавить в корзину'; // Устанавливаем текст кнопки
+            this._basketButton.textContent = this._isBasketButtonDisabled ? 'Не продается' : 'В корзину'; // Устанавливаем текст кнопки
         }
     }   
 

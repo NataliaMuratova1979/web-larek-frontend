@@ -36,18 +36,18 @@ export class Basket extends Component<IBasketView> {
     set items(items: HTMLElement[]) {
         if (items.length) {
             this._list.replaceChildren(...items);
+            this._orderButton.disabled = false; // Активируем кнопку, если есть элементы
         } else {
             this._list.replaceChildren(createElement<HTMLParagraphElement>('p', {
                 textContent: 'Корзина пуста'
             }));
+            this._orderButton.disabled = true; // Деактивируем кнопку, если корзина пуста
         }
     }
    
     set total(total: number) {
         this._total.textContent = total.toString() + ' синапсов';
-    }
-
-    
+    } 
 
 
 }

@@ -92,6 +92,10 @@ events.on('card:open', (data: { card: Card }) => {
   const productModalData = productData.getProduct(card.id);   
   const cardModal = new Card(cloneTemplate(cardModalTemplate), events); 
 
+  // нужно проверить, содержится ли productModalData в массиве заказанных товаров
+  // если содержно присвоить значение cardModal.ordered true
+  // в этом случае не должна отрисовываться кнопка "В корзину"
+
   modal.render({
     content: cardModal.render(productModalData)
   })
