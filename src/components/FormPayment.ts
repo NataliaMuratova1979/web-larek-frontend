@@ -31,15 +31,14 @@ export class FormPayment<T> extends Component<IFormState> {
             button.addEventListener('click', (e: Event) => {
                 const target = e.target as HTMLButtonElement;
                 const field = 'payment' as keyof T; // Укажите имя поля, которое вы хотите использовать
-                const value = target.textContent; // Получаем текст кнопки как значение
-                
+                const value = target.textContent; // Получаем текст кнопки как значение                
                 this.onInputChange(field, value); // Вызов метода с полем и значением
             });
         });
         
         this.container.addEventListener('submit', (e: Event) => {
             e.preventDefault();
-            this.events.emit(`${this.container.name}:submit`);
+            this.events.emit(`formPayment:submit`);
         });
     }
 
@@ -49,18 +48,6 @@ export class FormPayment<T> extends Component<IFormState> {
             value
         });
     } //событие отслеживается в файле index.ts
-
-    /*protected onPaymentMethodChange(field: keyof T, value: string | null) {
-        if (value) {
-            console.log(field, value);
-            this.events.emit(`${this.container.name}.${String(field)}:change`, {
-                field,
-                value
-            });
-        }
-    } // событие отслеживается в файле index.ts */
-    
-
     
     set valid(value: boolean) {
         this._submit.disabled = !value;

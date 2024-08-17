@@ -36,7 +36,7 @@ export interface IUserContacts  {
 }
    */
 
-import { FormErrors, IUserContacts, IUserPayment, IPaymentForm, IProduct } from "../types";
+import { FormErrors, IUserContacts, IUserPayment, IPaymentForm, IContactsForm, IProduct } from "../types";
 import { IEvents } from "./base/events";
 
 export interface IOrderData { // это данные товаров и действия, которые мы можем с ними выполнять
@@ -82,15 +82,7 @@ export class OrderData implements IOrderData {
         this._basket = [...this._basket, product]
         this.events.emit('basket:changed')        
      }
-/*
-    toggleOrderedLot(id: string, isIncluded: boolean) {
-        if (isIncluded) {
-            this.order.items = _.uniq([...this.order.items, id]);
-        } else {
-            this.order.items = _.without(this.order.items, id);
-        }
-    }
-*/
+
     getTotal() {
         return this._basket.length;
     }
@@ -113,14 +105,22 @@ export class OrderData implements IOrderData {
         this.userPayment[field] = value;
 
         if (this.validatePaymentForm()) {
-            this.events.emit('formContacts:open', /*this.order*/ );
+            this.events.emit('formContacts:open', this.userPayment );
+        }
+    }
+
+    setContactsField(field: keyof IContactsForm, value: string) {
+        this.userContacts[field] = value;
+
+        if (this.validateContactsForm()) {
+            this.events.emit('order:submit', this.userContacts );
         }
     }
 
     validatePaymentForm() {
         const errors: typeof this.formErrors = {};       
         if (!this.userPayment.payment) {
-            errors.payment = 'Необходимо указать способ оплаты';
+            errors.payment = 'Необходимо выбрать способ оплаты';
         }
         if (!this.userPayment.address) {
             errors.address = 'Необходимо указать адрес';
@@ -131,31 +131,20 @@ export class OrderData implements IOrderData {
     }
 
 
-
-
-
-
-
-
-/*
-
-    setOrderField(field: keyof IPaymentForm, value: string) {
-        this.order[field] = value;
-
-        if (this.validateOrder()) {
-            this.events.emit('order:ready', this.order);
+    validateContactsForm() {
+        const errors: typeof this.formErrors = {};       
+        if (!this.userContacts.phone) {
+            errors.phone = 'Необходимо указать телефон';
         }
+        if (!this.userContacts.email) {
+            errors.email = 'Необходимо указать электронную почту';
+        }
+        this.formErrors = errors;
+        this.events.emit('formErrors:change', this.formErrors);
+        return Object.keys(errors).length === 0;
     }
-        */
 
-    /*
-    set user(user: IUserData) {
-        this._user = user;
-        this.events.emit('order:ready')
-    }
-        */
 
-    //set userContacts
 
 }
      

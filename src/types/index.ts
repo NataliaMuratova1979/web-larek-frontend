@@ -36,7 +36,10 @@ export interface IPaymentForm {
     payment: string;
 }
 
-
+export interface IContactsForm {
+    email: string;
+    phone: string;
+}
 
 //export type IProductCard = Pick<IProductServerData, 'id' | 'image'| 'title' | 'category' | 'price' | 'description'>
 

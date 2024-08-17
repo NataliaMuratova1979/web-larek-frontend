@@ -4,6 +4,8 @@ import { ProductData } from './components/ProductData'; // данные - мас
 import { BasketData } from './components/BasketData'; // данные - массив товаров в корзине
 import { UserPaymentData } from './components/UserPaymentData';
 import { Payment } from './components/Payment'; // отображение - внутрянка первой формы
+import { Contacts } from './components/Contacts'; // отображение - внутрянка первой формы
+
 
 
 import { OrderData } from './components/OrderData'; // данные - массив товаров в корзине
@@ -21,7 +23,7 @@ import { Modal } from './components/Modal'; // отображение - мода
 import { AppApi } from './components/AppApi';
 import { Api } from './components/base/api';
 import { IApi } from './types';
-import { IPaymentForm, IOrderData } from './types';
+import { IPaymentForm, IContactsForm } from './types';
 
 
 import { Page } from './components/Page';
@@ -249,7 +251,6 @@ events.on(/^order\..*?:change$/, (data: { field: keyof IPaymentForm, value: stri
 });
 
 
-
 // Изменилось состояние валидации формы
 events.on('formErrors:change', (errors: Partial<IPaymentForm>) => {
   const { payment, address } = errors;
@@ -258,34 +259,54 @@ events.on('formErrors:change', (errors: Partial<IPaymentForm>) => {
 });
 
 
-
-
-
-
 // Пользователь кликнул на кнопку Далее
-// Произошло событие order:submit (в классе FormPayment)
-// Данные, полученные после заполнения формы, перемещаются в класс UserPaymentData
-
-const userPaymentData = new UserPaymentData(events);
+// Произошло событие formPayment:submit (в классе FormPayment)
+// Открывается форма FormContacts
 
 
-events.on('order:submit', (data) => {
+// Открыть первую форму заказа formPayment
 
-  const paymentData = data as { address: string; paymentMethod: string };
+const contactsFormTemplate: HTMLTemplateElement =
+	document.querySelector('#contacts'); 
+  // шаблон первой формы способ оплаты и адрес доставки
+console.log(contactsFormTemplate);
 
-  console.log(paymentData);
-  console.log(paymentData.address);  
-  console.log(paymentData.paymentMethod);
-  console.log('получили объект с данными');
- 
-  console.log('присвоили данные полям класса');
-  userPaymentData.address = paymentData.address;
-  userPaymentData.payment = paymentData.paymentMethod;
-  console.log('присвоили данные полям класса');
+const contacts = new Contacts(cloneTemplate(contactsFormTemplate), events);
 
-  console.log('userPaymentData.address:', userPaymentData.address);
-  console.log('userPaymentData.payment:', userPaymentData.payment);
+
+events.on('formPayment:submit', (data) => {
+   console.log('пора открывать вторую форму');
+   modal.render({
+    content: contacts.render({
+      email: '',
+      phone: '',
+      valid: false,
+      errors: []
+    })
+  });
 });
+
+
+// Изменилось одно из полей. событие происходит в файле FormContacts
+events.on(/^contacts\..*?:change$/, (data: { field: keyof IContactsForm, value: string }) => {
+  console.log('изменилось одно из полей');
+  order.setContactsField(data.field, data.value);
+  console.log(data);
+});
+
+
+// Изменилось состояние валидации формы
+events.on('formErrors:change', (errors: Partial<IContactsForm>) => {
+  const { phone, email } = errors;
+  contacts.valid = !phone && !email;
+  contacts.errors = Object.values({phone, email}).filter(i => !!i).join('; ');
+});
+
+
+
+
+
+
 
 // В классе UserPaymentData сработало событие 'formcontats:open'
 // Необходимо отрисовать вторую форму заполнения данных 
@@ -296,9 +317,6 @@ events.on('order:submit', (data) => {
 // Открыть первую форму заказа formPayment
 
 
-events.on('formContacts:open', () => {
-  console.log('пора открывать следующую форму');
-});
 
 
 
@@ -311,30 +329,6 @@ events.on('formContacts:open', () => {
 
 
 
-
-const contactsFormTemplate: HTMLTemplateElement =
-	document.querySelector('#contacts'); // шаблон второй формы email и телефон
-
-  // const formContacts = new FormContacts(cloneTemplate(contactsFormTemplate), events); // при рендере пригодится
-
-
-
-
-  
-
-
-/*
-events.on('formPayment:open', () => {
-  modal.render({
-      content: formPayment.render({
-          phone: '',
-          email: '',
-          valid: false,
-          errors: []
-      })
-  });
-});
-*/
 
 
 

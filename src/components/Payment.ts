@@ -19,7 +19,6 @@ export class Payment extends FormPayment<IPaymentForm> {
         const cashButton = this.container.elements.namedItem('cash') as HTMLButtonElement;
         const cardButton = this.container.elements.namedItem('card') as HTMLButtonElement;
      
-
         cashButton.addEventListener('click', () => {
             console.log('кликнули на кнопку выбора способа оплаты');
             this.payment = 'cash'; // Устанавливаем значение при нажатии кнопки
