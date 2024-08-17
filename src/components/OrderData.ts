@@ -79,8 +79,10 @@ export class OrderData implements IOrderData {
     }
 
     addProduct(product: IProduct) {
-        this._basket = [...this._basket, product]
-        this.events.emit('basket:changed')        
+        this._basket = [...this._basket, product];
+        this.events.emit('basket:changed', this._basket);
+        console.log('Пользователь добавил товар в корзину.', this._basket);
+
      }
 
     getTotal() {
@@ -99,6 +101,10 @@ export class OrderData implements IOrderData {
         } else {
             this.events.emit('basket:open')
         }
+    }
+
+    getProducts() {
+        return this._basket;
     }
 
     setPaymentField(field: keyof IPaymentForm, value: string) {
@@ -144,6 +150,15 @@ export class OrderData implements IOrderData {
         return Object.keys(errors).length === 0;
     }
 
+    getOrder() {
+        return {
+            basket: this._basket,
+            payment: this.userPayment.payment,
+            address: this.userPayment.address,
+            email: this.userContacts.email,
+            phone: this.userContacts.phone
+        };
+    }
 
 
 }

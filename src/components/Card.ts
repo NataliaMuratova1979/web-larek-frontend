@@ -20,8 +20,10 @@ export class Card extends Component<IProduct> {
     protected _deleteButton?: HTMLButtonElement;
     protected _basketButton?: HTMLButtonElement;
     protected _product: IProduct;
-    protected _index: HTMLElement; 
+    protected _index: HTMLElement;  
 
+     // Новое поле для управления состоянием кнопки
+     protected _isBasketButtonDisabled: boolean = false;
 
     constructor(protected container: HTMLElement, events: IEvents) {
         super(container);
@@ -38,15 +40,19 @@ export class Card extends Component<IProduct> {
         this._price = this.container.querySelector('.card__price');
         this._index = this.container.querySelector('.basket__item-index');
 
+
         if (this._basketButton) {
-            this._basketButton.addEventListener('click', () => this.events.emit('product:add', { card: this }));
+            this._basketButton.addEventListener('click', () => this.events.emit('product:add', { card: this })); 
+            // При срабатывании этого события объект товара попадает в массив товаров заказа orderData.addProduct
         }
 
         if (this._deleteButton) {
             this._deleteButton.addEventListener('click', () => this.events.emit('product:delete', { card: this }));
+            // При срабатывании этого события объект товара удаляется из массива товаров заказа orderData.deleteProduct
+            
         }                 
 
-        this.container.addEventListener('click', () => this.events.emit('card:open', { card: this }))
+        this.container.addEventListener('click', () => this.events.emit('card:open', { card: this }));
     }
 
     render(productData: Partial<IProduct> | undefined ) { 
@@ -80,42 +86,40 @@ export class Card extends Component<IProduct> {
     }
     }
        
-    //set description(description: string) {
-        //this._description.textContent = description;
-    //} 
-
-/*
-    set description(description: string) {
-       if (this._description === null) {
-       console.log('Здесь нет описания ')
-    } else {
-       this._description.textContent = description;
-    }
-    }
-*/
-  
 
     set description(description: string) {
         if (this._description) {
         this._description.textContent = description;
     }
-    }
+    }  
 
-  
-    set price(price: number | null) {
-      price ? this._price.textContent = price.toString() + ' синапсов' : this._price.textContent = 'Бесценно';
-    }   
 
     set category(category: string) {
         if (this._category) {
         this._category.textContent = category;
     }
-    }     
+    } 
+
+    set price(price: number | null) {
+        if (price !== null) {
+            this._price.textContent = price.toString() + ' синапсов';
+            this._isBasketButtonDisabled = false; // Кнопка активна
+        } else {
+            this._price.textContent = 'Бесценно';
+            this._isBasketButtonDisabled = true; // Кнопка неактивна
+        }
+        
+        // Обновляем состояние кнопки
+        if (this._basketButton) {
+            this._basketButton.disabled = this._isBasketButtonDisabled; // Устанавливаем состояние кнопки
+            this._basketButton.textContent = this._isBasketButtonDisabled ? 'Недоступно' : 'Добавить в корзину'; // Устанавливаем текст кнопки
+        }
+    }   
 
 
     deleteCard() {
         this.container.remove();
-       // this.element = null;
+        // this.events.emit('basketProduct:delete', )
     }
      
 }

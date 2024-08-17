@@ -1,8 +1,6 @@
 import './scss/styles.scss';
 import { EventEmitter } from './components/base/events'; // брокер событий
 import { ProductData } from './components/ProductData'; // данные - массив товаров
-import { BasketData } from './components/BasketData'; // данные - массив товаров в корзине
-import { UserPaymentData } from './components/UserPaymentData';
 import { Payment } from './components/Payment'; // отображение - внутрянка первой формы
 import { Contacts } from './components/Contacts'; // отображение - внутрянка первой формы
 
@@ -11,12 +9,6 @@ import { Contacts } from './components/Contacts'; // отображение - в
 import { OrderData } from './components/OrderData'; // данные - массив товаров в корзине
 //import { UserContactsData } from './components/UserContactsData'; // данные, полученные из второй формы
 //import { UserPaymentData } from './components/UserPaymentData'; // данные, полученный из первой формы
-
-
-
-
-import { IProduct, IProductsData } from "././types";
-
 
 import { Modal } from './components/Modal'; // отображение - модальное окно 
 
@@ -54,7 +46,7 @@ events.onAll((event) => {
 
 const productData = new ProductData(events); //это экземпляр класса, который содержит массив товаров, а также позволяет совершать действия с ними. Мы будем использовать его для хранения данных товаров, загруженных с сервера 
 
-//------------------ Получаем карточки с сервера -----------------------
+// ------------------ Получаем карточки с сервера ------------------ //
 const promise = api.getProducts();
 
 promise
@@ -67,8 +59,7 @@ promise
   });
 
 
-const cardTemplate: HTMLTemplateElement =
-	document.querySelector('#card-catalog'); // шаблон карточки в каталоге на главной странице
+const cardTemplate: HTMLTemplateElement = document.querySelector('#card-catalog'); // шаблон карточки в каталоге на главной странице
 
 const cardModalTemplate: HTMLTemplateElement = document.querySelector('#card-preview'); // шаблон карточки в превью
 
@@ -91,67 +82,67 @@ events.on('products:loaded', () => {
 // Глобальные контейнеры
 const page = document.querySelector('.page');
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
-const basketCounter = new BasketCounter(document.querySelector('.header__basket'), events);
 
 
-
-// Пользователь кликнул на карточку товара на главной странице. В модальном окне отрисовывается превью карточки. 
+// Пользователь кликнул на карточку товара на главной странице. 
+// В модальном окне отрисовывается превью карточки. 
 
 events.on('card:open', (data: { card: Card }) => {
-  const { card } = data; 
-
-  const productModalData = productData.getProduct(card.id);  
-   
+  const { card } = data;
+  const productModalData = productData.getProduct(card.id);   
   const cardModal = new Card(cloneTemplate(cardModalTemplate), events); 
-  //console.log(cardModal);
 
   modal.render({
     content: cardModal.render(productModalData)
   })
 });
 
-//  ----------------- OrderData - класс данных заказа ----------------------
+//  ----------------- OrderData - класс данных заказа ---------------------- //
 
 const orderData = new OrderData(events); //данные товара попадают сразу в заказ в корзине
 orderData.basket = []; // инициируем пустой массив для будущих товаров
 
 
-
-// Пользователь добавил товар в корзину, обновляем массив данных товаров в заказе 
+// Пользователь нажал на кнопку "В корзину"
+// обновляем массив данных товаров в заказе 
+// закрываем модальное окно 
 
 events.on('product:add', (data: { card: Card }) => {
   const { card } = data; 
   const basketItemData = productData.getProduct(card.id);
 
   orderData.addProduct(basketItemData); // обновленный массив данных корзины  
+  console.log('обновился массив товаров в заказе', orderData.basket );
+
+  modal.close();
 });
 
 // Обновился массив данных в корзине, обновляем значение счетчика на корзинке
 // Каждый товар в корзинке должен получить актуальный индекс
 
-events.on('basket:changed', () => { // обновляем значение счётчика при изменении данных корзины
-  basketCounter.counter = orderData.getTotal();
-  console.log(orderData);  
-  console.log(orderData.basket);
 
+const basketCounter = new BasketCounter(document.querySelector('.header__basket'), events);
+
+events.on('basket:changed', () => { 
+  // обновляем значение счётчика при изменении данных корзины
+  basketCounter.counter = orderData.getTotal(); 
 });
 
 
-// Пользователь кликнул на значок корзины на главной странице. 
-// Надо отрисовать модальное окно с содержимым. Событие basket:open прописано в файле Page.ts
-// Пользователь удалил товар из корзинки. Надо заново отрисовать модальное окно с содержимым. 
-// Надо присвоить каждому cardBasket индекс, взяв его из basketData.products 
-// Надо посчитать сумму всех товаров в корзине
+
+
+/*
+- Пользователь кликнул на значок корзины на главной странице. 
+- Надо отрисовать модальное окно с содержимым. Событие basket:open прописано в файле Page.ts
+- Пользователь удалил товар из корзинки. Надо заново отрисовать модальное окно с содержимым. 
+- Надо присвоить каждому cardBasket индекс, взяв его из basketData.products 
+ Надо посчитать сумму всех товаров в корзине
+*/
 
 const basketTemplate: HTMLTemplateElement = document.querySelector('#basket'); // это клон темплейта всей корзины
 
 const basket = new Basket(cloneTemplate(basketTemplate), events); // Это экземпляр класса  Basket, с его помощью будем отображать список товаров корзины, кнопку оформить и общую сумму
-/*
-const basketContainer = new CardsContainer(
-  document.querySelector('.basket__list'), events // это контейнер для карточек
-); // этот контейнер нам не пригодится 
-*/
-  
+
 const cardBasketTemplate: HTMLTemplateElement = document.querySelector('#card-basket');  // шаблон карточки внутри корзины  
 
 
@@ -164,20 +155,19 @@ events.on('basket:open', () => {
   basket.items = orderData.basket.map((card, index) => {
   const cardBasket = new Card(cloneTemplate(cardBasketTemplate), events);
   cardBasket.index = index + 1; 
+ 
   return cardBasket.render(card);
   // получили каждую карточку
   // получили индекс каждой карточки 
   // получили массив карточек basketCardsArray, который будет массивом items[] в классе Basket
 });
 
-console.log('ниже массив карточек для корзины');
-console.log(basket.items);
-
   const basketTotal = orderData.totalPrice(orderData.basket);
-  basket.total = basketTotal;
+  basket.total = basketTotal;  
+  console.log('Сумма покупки', basketTotal);
 
-  console.log("ниже сумма заказанных товаров"); 
-  console.log(basketTotal);
+
+
   // получили сумму заказанных товаров, которая будет присвоена total в классе Basket
 
 modal.render({ // отображаем содержимое в модальном окне
@@ -186,7 +176,9 @@ modal.render({ // отображаем содержимое в модально�
 })
 
 
-//Пользователь кликнул на значок удаления товара из корзины. В классе Card срабатывает событие product:delete. В классе BasketData вызывается метод deleteProduct, после отработки которого возникате событие basket:open, которое заново отрисует модальное окно с товарами корзины
+// Пользователь кликнул на значок удаления товара из корзины. 
+// В классе Card срабатывает событие product:delete. 
+// В классе BasketData вызывается метод deleteProduct, после отработки которого возникает событие basket:open, которое заново отрисует модальное окно с товарами корзины
 
 events.on('product:delete', (data: { card: Card }) => {
 
@@ -198,8 +190,8 @@ events.on('product:delete', (data: { card: Card }) => {
 });
 
 
-const order = new OrderData(events); // срздаем экземпляр класса данных для заказа 
-order.basket = []; // инициируем массив для товаров
+//const order = new OrderData(events); // срздаем экземпляр класса данных для заказа 
+//order.basket = []; // инициируем массив для товаров
 
 // Пользователь нажал на кнопку оформить в корзине
 // Сработало событие order:make 
@@ -209,10 +201,13 @@ order.basket = []; // инициируем массив для товаров
 events.on('order:make', () => {
   console.log('ниже товары корзины'); 
  // console.log(basketData.products);
-
+  const orderedProducts = orderData.getProducts;
+  console.log(orderedProducts);
   //order.basket = basketData.products;
   console.log('ниже товары заказа'); 
-  console.log(order.basket);
+  console.log(orderData.basket);
+  console.log('выщше товары заказа'); 
+
 }
 )
 
@@ -246,7 +241,7 @@ events.on('formPayment:open', () => {
 // Изменилось одно из полей. событие происходит в файле FormPayment
 events.on(/^order\..*?:change$/, (data: { field: keyof IPaymentForm, value: string }) => {
   console.log('изменилось одно из полей');
-  order.setPaymentField(data.field, data.value);
+  orderData.setPaymentField(data.field, data.value);
   console.log(data);
 });
 
@@ -290,7 +285,7 @@ events.on('formPayment:submit', (data) => {
 // Изменилось одно из полей. событие происходит в файле FormContacts
 events.on(/^contacts\..*?:change$/, (data: { field: keyof IContactsForm, value: string }) => {
   console.log('изменилось одно из полей');
-  order.setContactsField(data.field, data.value);
+  orderData.setContactsField(data.field, data.value);
   console.log(data);
 });
 
@@ -302,20 +297,11 @@ events.on('formErrors:change', (errors: Partial<IContactsForm>) => {
   contacts.errors = Object.values({phone, email}).filter(i => !!i).join('; ');
 });
 
-
-
-
-
-
-
-// В классе UserPaymentData сработало событие 'formcontats:open'
-// Необходимо отрисовать вторую форму заполнения данных 
-// Создаем класс отображения FormContacts
-// После заполнения данные попадут в класс UserContactsData
-
-
-// Открыть первую форму заказа formPayment
-
+events.on('order:submit', () => {
+  console.log('пора отправлять заказ');
+  const orderDetails = orderData.getOrder(); // Вызов функции getOrder
+  console.log(orderDetails); // Вывод результата в консоль
+});
 
 
 

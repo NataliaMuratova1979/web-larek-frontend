@@ -9,6 +9,7 @@ export class Modal extends Component<IModalData> {
     protected _closeButton: HTMLButtonElement;
     protected _content: HTMLElement;
 
+
     constructor(container: HTMLElement, protected events: IEvents) {
         super(container);
 
@@ -16,8 +17,18 @@ export class Modal extends Component<IModalData> {
         this._content = this.container.querySelector('.modal__content');
 
         this._closeButton.addEventListener('click', this.close.bind(this));
+
         this.container.addEventListener('click', this.close.bind(this));
+
+        this.container.addEventListener('click', (event) => {
+            // Проверяем, был ли клик на самом контейнере (оверлее)
+            if (event.target === this.container) {
+                this.close();
+            }
+        });
+
         this._content.addEventListener('click', (event) => event.stopPropagation());
+      
     }
 
     set content(value: HTMLElement) {
@@ -43,5 +54,3 @@ export class Modal extends Component<IModalData> {
 }
 
 
-
-//Добавить обрабочик на esc

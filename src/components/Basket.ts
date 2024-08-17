@@ -14,6 +14,7 @@ export class Basket extends Component<IBasketView> {
     protected _list: HTMLElement;
     protected _total: HTMLElement;
     protected _button: HTMLElement;
+    protected _orderButton: HTMLButtonElement;
 
     constructor(container: HTMLElement, protected events: IEvents) {
         super(container);
@@ -21,10 +22,10 @@ export class Basket extends Component<IBasketView> {
 
         this._list = this.container.querySelector('.basket__list');
         this._total = this.container.querySelector('.basket__price');
-        this._button = this.container.querySelector('.button');
+        this._orderButton = this.container.querySelector('.basket__button');
 
-        if (this._button) {
-            this._button.addEventListener('click', () => {
+        if (this._orderButton) {
+            this._orderButton.addEventListener('click', () => {
                 events.emit('formPayment:open'); //?
             });
         }
@@ -45,4 +46,8 @@ export class Basket extends Component<IBasketView> {
     set total(total: number) {
         this._total.textContent = total.toString() + ' синапсов';
     }
+
+    
+
+
 }
