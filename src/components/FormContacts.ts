@@ -31,7 +31,7 @@ export class FormContacts<T> extends Component<IFormState> {
 
         this.container.addEventListener('submit', (e: Event) => {
             e.preventDefault();
-            this.events.emit(`order:submit`);
+            this.events.emit(`order:send`); // !!!!!!!!!!!!!!!
         });
     }
 
