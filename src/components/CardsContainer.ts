@@ -27,14 +27,6 @@ export class CardsContainer extends Component<ICardsContainer>{
     set catalog(items: HTMLElement[]) {
         this.container.replaceChildren( ...items);
     }
-
-    /*
-    set totalBasket(totalPrice: number) { //totalPrice вычисляется в BasketData, сумма прайсов всех product
-        if (this.totalBasket) {
-        this._totalBasket.textContent = totalPrice.toString() + ' синапсов';
-      }
-    }
-      */
-        
+          
 }
 

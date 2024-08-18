@@ -81,10 +81,6 @@ export class ProductData implements IProductsData {
         return this._products.length;
     }
 
-    //set status - ordered или нет
-
-    //set impolssible -  если нет цены, в корзну не добавить 
-
 }
 
 

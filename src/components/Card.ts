@@ -53,8 +53,6 @@ export class Card extends Component<IProduct> {
             this._basketButton.addEventListener('click', (event) => {
                 event.stopPropagation(); // Останавливаем всплытие события
 
-                //this._basketButton.disabled = true;                
-
                 this.events.emit('product:add', { card: this });
             });
         }
@@ -62,8 +60,6 @@ export class Card extends Component<IProduct> {
         if (this._deleteButton) {
             this._deleteButton.addEventListener('click', (event) => {
                 event.stopPropagation();
-
-               //this._basketButton.disabled = false;
 
                 this.events.emit('product:delete', { card: this });
             // При срабатывании этого события объект товара удаляется из массива товаров заказа orderData.deleteProduct
@@ -77,7 +73,6 @@ export class Card extends Component<IProduct> {
         const { ...allProductData } = productData;
         Object.assign(this, allProductData); 
         this.updateBasketButtonState(); // Обновляем состояние кнопки после рендера
-        console.log('возвращаем контейнер внутри рендера', this.container);
         return this.container;
     }
 
@@ -88,7 +83,6 @@ export class Card extends Component<IProduct> {
     }
 
     set ordered(value: boolean) {
-        console.log('Сеттер вызван с значением:', value);
         this._ordered = value;
         
         if (this._basketButton) {

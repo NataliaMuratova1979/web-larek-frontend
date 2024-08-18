@@ -2,15 +2,6 @@ import { IUserPayment } from "../types";
 import { IEvents } from "./base/events";
 
 
-/*
-export interface IUserPayment {
-
-    address: string;
-    payment: string;
-   // addData() // добавляем данные в объект заказа
-   // checkValidation(data: Record<keyof IOrderFormData, string>): boolean;
-}
-*/
 
 export class UserPaymentData implements IUserPayment {
     protected _address: string;
