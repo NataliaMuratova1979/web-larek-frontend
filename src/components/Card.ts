@@ -18,7 +18,7 @@ export class Card extends Component<IProduct> {
     protected _price: HTMLElement;
     protected _id: string;
 
-    protected _ordered: boolean; // это поле для проверки, является ли товар уже заказанным 
+    protected _ordered: boolean = false; // это поле для проверки, является ли товар уже заказанным
 
 
 
@@ -36,7 +36,8 @@ export class Card extends Component<IProduct> {
         this.events = events;
     
         this._deleteButton = this.container.querySelector('.basket__item-delete');
-        this._basketButton = this.container.querySelector('.card__button');
+        this._basketButton = this.container.querySelector('.button.card__button');
+
 
         this._image = this.container.querySelector('.card__image');
         this._category = this.container.querySelector('.card__category');
@@ -47,13 +48,18 @@ export class Card extends Component<IProduct> {
 
 
         if (this._basketButton) {
-            this._basketButton.addEventListener('click', () => this.events.emit('product:add', { card: this })); 
-            // При срабатывании этого события объект товара попадает в массив товаров заказа orderData.addProduct
+            this._basketButton.addEventListener('click', (event) => {
+                event.stopPropagation(); // Останавливаем всплытие события
+                this.events.emit('product:add', { card: this });
+            });
         }
 
         if (this._deleteButton) {
-            this._deleteButton.addEventListener('click', () => this.events.emit('product:delete', { card: this }));
+            this._deleteButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                this.events.emit('product:delete', { card: this });
             // При срабатывании этого события объект товара удаляется из массива товаров заказа orderData.deleteProduct
+        });
             
         }                 
 
@@ -64,8 +70,31 @@ export class Card extends Component<IProduct> {
 
         const { ...allProductData} = productData;
         Object.assign(this, allProductData); 
+
+         // Установите состояние кнопки на основе _ordered
+         this.updateBasketButtonState();
+
+
         return this.container;
     }    
+
+      // Новый сеттер для _ordered
+      set ordered(value: boolean) {
+        this._ordered = value;
+        this.updateBasketButtonState();
+    }
+
+
+     // Метод для обновления состояния кнопки
+    protected updateBasketButtonState() {
+        if (this._basketButton) {
+            this._basketButton.disabled = this._ordered; // Устанавливаем состояние кнопки
+            this._basketButton.textContent = this._ordered ? 'Заказан' : 'В корзину'; // Устанавливаем текст кнопки
+        }
+    }
+
+
+
     
     set index(index: number) {
         if (this._index) {
@@ -129,50 +158,3 @@ export class Card extends Component<IProduct> {
      
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-// непонятно, что делать с кнопкой
-// непонятно, что делать с картинкой
-
-/*
-set ordered (ordered: boolean) {
-    this._ordered = ordered;
-}
-
-get ordered() {
-    return this._ordered;
-}
-
-set blocked (blocked: boolean) {
-    if (this._price.textContent = 'Бесценно') {
-        this.blocked = true;
-    }
-}
-
-get blocked() {
-    return this.blocked;
-}
-    */
-
-
-
-/*
-    isOrdered() {
-        // return если уже в корзине
-        
-    }
-
-    isBlocked() {
-        // неактивна кнопка купить, если нет цены
-    }
-*/

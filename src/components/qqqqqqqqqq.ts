@@ -1,40 +1,33 @@
-export class Basket extends Component<IBasketView> {
+export class Card extends Component<IProduct> {
+    // ... ваш код ...
 
-    protected _list: HTMLElement;
-    protected _total: HTMLElement;
-    protected _button: HTMLElement;
-    protected _orderButton: HTMLButtonElement;
+    protected _ordered: boolean = false; // Изначально не заказан
 
-    constructor(container: HTMLElement, protected events: IEvents) {
-        super(container);
-        this.events = events;
+    // ... ваш код ...
 
-        this._list = this.container.querySelector('.basket__list');
-        this._total = this.container.querySelector('.basket__price');
-        this._orderButton = this.container.querySelector('.basket__button');
+    render(productData: Partial<IProduct> | undefined) { 
+        const { ...allProductData } = productData;
+        Object.assign(this, allProductData); 
 
-        if (this._orderButton) {
-            this._orderButton.addEventListener('click', () => {
-                events.emit('formPayment:open');
-            });
-        }
+        // Установите состояние кнопки на основе _ordered
+        this.updateBasketButtonState();
 
-        this.items = []; // Инициализация пустого массива
+        return this.container;
     }
 
-    set items(items: HTMLElement[]) {
-        if (items.length) {
-            this._list.replaceChildren(...items);
-            this._orderButton.disabled = false; // Активируем кнопку, если есть элементы
-        } else {
-            this._list.replaceChildren(createElement<HTMLParagraphElement>('p', {
-                textContent: 'Корзина пуста'
-            }));
-            this._orderButton.disabled = true; // Деактивируем кнопку, если корзина пуста
+    // Новый сеттер для _ordered
+    set ordered(value: boolean) {
+        this._ordered = value;
+        this.updateBasketButtonState();
+    }
+
+    // Метод для обновления состояния кнопки
+    private updateBasketButtonState() {
+        if (this._basketButton) {
+            this._basketButton.disabled = this._ordered; // Устанавливаем состояние кнопки
+            this._basketButton.textContent = this._ordered ? 'Заказан' : 'В корзину'; // Устанавливаем текст кнопки
         }
     }
-   
-    set total(total: number) {
-        this._total.textContent = total.toString() + ' синапсов';
-    }
+
+    // ... ваш код ...
 }

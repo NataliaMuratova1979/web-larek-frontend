@@ -10,5 +10,9 @@ export class AppApi {
 	getProducts(): Promise<IData> {
 		return this._baseApi.get<IData>(`/product`).then((result: IData) => result);
 	}
+
+
+
+	
 }
 

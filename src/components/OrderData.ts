@@ -99,7 +99,9 @@ export class OrderData implements IOrderData {
         if(payload) {
             payload();
         } else {
-            this.events.emit('basket:open')
+            this.events.emit('basket:open');
+            console.log('Пользователь добавил товар в корзину.', this._basket);
+
         }
     }
 

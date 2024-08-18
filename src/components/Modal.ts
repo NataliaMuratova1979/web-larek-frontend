@@ -41,6 +41,7 @@ export class Modal extends Component<IModalData> {
     }
 
     close() {
+        console.log('Вызываем метод close');
         this.container.classList.remove('modal_active');
         this.content = null;
         this.events.emit('modal:close');

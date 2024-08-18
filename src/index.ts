@@ -52,6 +52,7 @@ const promise = api.getProducts();
 promise
   .then((data) => {
     productData.products = data.items;
+    console.log(data.items);
     events.emit('products:loaded'); // сгенерировали событие
   })
   .catch((err) => {
@@ -83,6 +84,9 @@ events.on('products:loaded', () => {
 const page = document.querySelector('.page');
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
+const orderData = new OrderData(events); //данные товара попадают сразу в заказ в корзине
+orderData.basket = []; // инициируем пустой массив для будущих товаров
+
 
 // Пользователь кликнул на карточку товара на главной странице. 
 // В модальном окне отрисовывается превью карточки. 
@@ -90,7 +94,14 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 events.on('card:open', (data: { card: Card }) => {
   const { card } = data;
   const productModalData = productData.getProduct(card.id);   
-  const cardModal = new Card(cloneTemplate(cardModalTemplate), events); 
+  const cardModal = new Card(cloneTemplate(cardModalTemplate), events);
+
+  const orderedProducts = orderData.getProducts();
+  const isOrdered = orderedProducts.some(orderedProduct => orderedProduct.id === productModalData.id);
+
+  cardModal.ordered = isOrdered;
+
+  
 
   // нужно проверить, содержится ли productModalData в массиве заказанных товаров
   // если содержно присвоить значение cardModal.ordered true
@@ -102,38 +113,6 @@ events.on('card:open', (data: { card: Card }) => {
 });
 
 //  ----------------- OrderData - класс данных заказа ---------------------- //
-
-const orderData = new OrderData(events); //данные товара попадают сразу в заказ в корзине
-orderData.basket = []; // инициируем пустой массив для будущих товаров
-
-
-// Пользователь нажал на кнопку "В корзину"
-// обновляем массив данных товаров в заказе 
-// закрываем модальное окно 
-
-events.on('product:add', (data: { card: Card }) => {
-  const { card } = data; 
-  const basketItemData = productData.getProduct(card.id);
-
-  orderData.addProduct(basketItemData); // обновленный массив данных корзины  
-  console.log('обновился массив товаров в заказе', orderData.basket );
-
-  modal.close();
-});
-
-// Обновился массив данных в корзине, обновляем значение счетчика на корзинке
-// Каждый товар в корзинке должен получить актуальный индекс
-
-
-const basketCounter = new BasketCounter(document.querySelector('.header__basket'), events);
-
-events.on('basket:changed', () => { 
-  // обновляем значение счётчика при изменении данных корзины
-  basketCounter.counter = orderData.getTotal(); 
-});
-
-
-
 
 /*
 - Пользователь кликнул на значок корзины на главной странице. 
@@ -179,10 +158,28 @@ modal.render({ // отображаем содержимое в модально�
 })
 })
 
+// Пользователь нажал на кнопку "В корзину"
+// обновляем массив данных товаров в заказе 
+// закрываем модальное окно 
+
+events.on('product:add', (data: { card: Card }) => {
+  const { card } = data; 
+  const basketItemData = productData.getProduct(card.id);
+
+  orderData.addProduct(basketItemData); // обновленный массив данных корзины  
+  console.log('обновился массив товаров в заказе', orderData.basket );
+
+  modal.close();
+  basketCounter.counter = orderData.getTotal();  
+
+});
+
+
 
 // Пользователь кликнул на значок удаления товара из корзины. 
 // В классе Card срабатывает событие product:delete. 
 // В классе BasketData вызывается метод deleteProduct, после отработки которого возникает событие basket:open, которое заново отрисует модальное окно с товарами корзины
+
 
 events.on('product:delete', (data: { card: Card }) => {
 
@@ -190,8 +187,28 @@ events.on('product:delete', (data: { card: Card }) => {
   const basketItemData = productData.getProduct(card.id); //??? должно быть basketData???
 
   orderData.deleteProduct(basketItemData.id); // обновленный массив данных корзины  
+  console.log('обновился массив товаров в заказе', orderData.basket );
+  
+  basketCounter.counter = orderData.getTotal(); 
+  console.log('Количество товаров в корзине тоже пересчитаем')
+
 
 });
+
+// Обновился массив данных в корзине, обновляем значение счетчика на корзинке
+// Каждый товар в корзинке должен получить актуальный индекс
+
+
+const basketCounter = new BasketCounter(document.querySelector('.header__basket'), events);
+
+events.on('basket:changed', () => { 
+  // обновляем значение счётчика при изменении данных корзины
+  basketCounter.counter = orderData.getTotal(); 
+});
+
+
+
+
 
 
 //const order = new OrderData(events); // срздаем экземпляр класса данных для заказа 
@@ -304,7 +321,10 @@ events.on('formErrors:change', (errors: Partial<IContactsForm>) => {
 events.on('order:submit', () => {
   console.log('пора отправлять заказ');
   const orderDetails = orderData.getOrder(); // Вызов функции getOrder
-  console.log(orderDetails); // Вывод результата в консоль
+  console.log('это наш объект заказа', orderDetails); // Вывод результата в консоль
+
+
+
 });
 
 
