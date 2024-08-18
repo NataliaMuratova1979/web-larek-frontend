@@ -153,8 +153,34 @@ export class Card extends Component<IProduct> {
 
     set category(category: string) {
         if (this._category) {
-        this._category.textContent = category;
-    }
+            // Удаляем все возможные классы перед добавлением нового
+            this._category.classList.remove('card__category_other', 'card__category_soft', 'card__category_hard', 'card__category_additional', 'card__category_button');
+    
+            // Устанавливаем текст
+            this._category.textContent = category;
+    
+            // Добавляем класс в зависимости от значения category
+            switch (category) {
+                case 'другое':
+                    this._category.classList.add('card__category_other');
+                    break;
+                case 'дополнительное':
+                    this._category.classList.add('card__category_additional');
+                    break;
+                case 'софт-скил':
+                    this._category.classList.add('card__category_soft');
+                    break;
+                case 'хард-скил':
+                    this._category.classList.add('card__category_hard');
+                    break;
+                case 'кнопка':
+                    this._category.classList.add('card__category_button');
+                    break;
+                default:
+                    
+                    break;
+            }
+        }
     } 
 
     deleteCard() {
