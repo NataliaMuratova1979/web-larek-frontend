@@ -11,11 +11,11 @@ export class AppApi {
 		return this._baseApi.get<IData>(`/product`).then((result: IData) => result);
 	}
 
-	/*
+	
 	postOrder(orderData: IOrderSendData): Promise<IResponse> {
         return this._baseApi.post<IResponse>('/order', orderData)
             .then((result: IResponse) => result);
-    }*/
+    }
 	
 }
 

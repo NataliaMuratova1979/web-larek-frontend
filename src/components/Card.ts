@@ -41,7 +41,6 @@ export class Card extends Component<IProduct> {
         this._deleteButton = this.container.querySelector('.basket__item-delete');
         this._basketButton = this.container.querySelector('.button.card__button');
 
-
         this._image = this.container.querySelector('.card__image');
         this._category = this.container.querySelector('.card__category');
         this._title = this.container.querySelector('.card__title');
@@ -122,7 +121,6 @@ export class Card extends Component<IProduct> {
     get ordered(): boolean {
         return this._ordered;
     }
-
     
     set index(index: number) {
         if (this._index) {
@@ -147,21 +145,17 @@ export class Card extends Component<IProduct> {
         this._image.src = CDN_URL + url;    
     }
        
-
     set description(description: string) {
         if (this._description) {
         this._description.textContent = description;
     }
     }  
 
-
     set category(category: string) {
         if (this._category) {
         this._category.textContent = category;
     }
     } 
-
-  
 
     deleteCard() {
         this.container.remove();

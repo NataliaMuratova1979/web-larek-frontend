@@ -115,12 +115,17 @@ export interface IOrderData { // это данные товаров и дейс�
 }
 
 export interface IOrderSendData { // это данные товаров и действия, которые мы можем с ними выполнять
-    basket: IProduct[];
-    address: string;
     payment: string;
     email: string;
     phone: string;
+    address: string;
+    total: number;
+    items: string[];
 }
+
+
+
+
 
 export interface IResponse { // это данные товаров и действия, которые мы можем с ними выполнять
     id: string;

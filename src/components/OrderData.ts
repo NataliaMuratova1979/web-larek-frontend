@@ -89,9 +89,9 @@ export class OrderData implements IOrderData {
         return this._basket.length;
     }
 
-    totalPrice(basket: IProduct[]) {
-        return basket.reduce((total, product) => total + product.price, 0);
-      }
+    totalPrice(): number { // Изменяем метод для возврата типа number
+        return this._basket.reduce((total, product) => total + product.price, 0);
+    }
 
     deleteProduct(productId: string, payload: Function | null = null) {
         this._basket = this.basket.filter(product => product.id !== productId);
@@ -154,33 +154,20 @@ export class OrderData implements IOrderData {
 
     getOrder() {
         return {
-            basket: this._basket,
+            items: this._basket.map(product => product.id),
             payment: this.userPayment.payment,
             address: this.userPayment.address,
             email: this.userContacts.email,
-            phone: this.userContacts.phone
+            phone: this.userContacts.phone,
+            total: this.totalPrice()
         };
     }
 
-
-    createOrderPayload() {
-        const total = this.totalPrice(this._basket); // Получаем общую стоимость товаров
-        const id = this.generateOrderId(); // Генерируем уникальный ID заказа
-
-        return {
-            id,
-            total
-        };
-    }
-
-    generateOrderId() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
-
-
+    clearOrder() {
+        this._basket = []; // Очищаем корзину
+        this.events.emit('basket:changed', this._basket); // Уведомляем об изменении корзины
+        console.log('Корзина очищена.', this._basket);
+    }   
 
 }
      
