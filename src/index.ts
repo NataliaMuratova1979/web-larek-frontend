@@ -330,28 +330,27 @@ events.on('order:send', () => {
   console.log('сейчас будем отправлять заказ', orderToSend);
 
   console.log('это наш объект заказа', orderToSend); 
+  console.log(orderToSend.total);
 
       api.postOrder(orderToSend)
         .then((result) => { 
         console.log('что происходит пocле then')
          const success =  new Success(cloneTemplate(successTemplate),
+         
             {
               onClick: () => {
                 console.log('что происходит в onClick ');
                 modal.close();
-
-                success.total = orderToSend.total;
-
                 orderData.clearOrder();
-
-                events.emit('order:sent');
-                
+                events.emit('order:sent');                
                 basketCounter.counter = 0;
                 }
             });
 
             modal.render({
-              content: success.render({ })
+              content: success.render({
+                 total: orderToSend.total
+              })
             });
           })
           .catch(err => {

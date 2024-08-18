@@ -31,17 +31,13 @@ export class Payment extends FormPayment<IPaymentForm> {
 
         // Обновляем состояние кнопок
         if (value === 'cash') {
-            cashButton.classList.add('active');
-            cardButton.classList.remove('active');
+            cashButton.classList.add('button_alt-active');
+            cardButton.classList.remove('button_alt-active');
         } else if (value === 'card') {
-            cardButton.classList.add('active');
-            cashButton.classList.remove('active');
+            cardButton.classList.add('button_alt-active');
+            cashButton.classList.remove('button_alt-active');
         }
     }
-
-
-
-
 }
 
   
