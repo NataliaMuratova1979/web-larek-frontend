@@ -1,4 +1,4 @@
-import { IApi, IProduct, IData } from '../types';
+import { IApi, IProduct, IData, IOrderSendData, IResponse } from '../types';
 
 export class AppApi {
 	private _baseApi: IApi;
@@ -11,8 +11,11 @@ export class AppApi {
 		return this._baseApi.get<IData>(`/product`).then((result: IData) => result);
 	}
 
-
-
+	/*
+	postOrder(orderData: IOrderSendData): Promise<IResponse> {
+        return this._baseApi.post<IResponse>('/order', orderData)
+            .then((result: IResponse) => result);
+    }*/
 	
 }
 

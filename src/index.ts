@@ -92,25 +92,28 @@ orderData.basket = []; // инициируем пустой массив для 
 // В модальном окне отрисовывается превью карточки. 
 
 events.on('card:open', (data: { card: Card }) => {
-  const { card } = data;
-  const productModalData = productData.getProduct(card.id);   
-  const cardModal = new Card(cloneTemplate(cardModalTemplate), events);
+    const { card } = data;
+    const productModalData = productData.getProduct(card.id);   
+    const cardModal = new Card(cloneTemplate(cardModalTemplate), events);
 
-  const orderedProducts = orderData.getProducts();
-  const isOrdered = orderedProducts.some(orderedProduct => orderedProduct.id === productModalData.id);
+    // Проверяем, содержится ли товар в массиве заказанных
 
-  cardModal.ordered = isOrdered;
+    const orderedProducts = orderData.getProducts();
+    const isOrdered = orderedProducts.some(orderedProduct => orderedProduct.id === productModalData.id);
 
-  
+    console.log('Содержится ли товар в заказанных:', isOrdered);
+    console.log('Устанавливаем ordered:', isOrdered);
+    cardModal.ordered = isOrdered; // Устанавливаем значение, что товар заказан
+    console.log('Проверям, сработал ли сеттер, получаем значенияе', cardModal.ordered);
 
-  // нужно проверить, содержится ли productModalData в массиве заказанных товаров
-  // если содержно присвоить значение cardModal.ordered true
-  // в этом случае не должна отрисовываться кнопка "В корзину"
-
-  modal.render({
-    content: cardModal.render(productModalData)
-  })
+    modal.render({
+        content: cardModal.render(productModalData)
+    });
 });
+
+
+
+
 
 //  ----------------- OrderData - класс данных заказа ---------------------- //
 
@@ -170,7 +173,7 @@ events.on('product:add', (data: { card: Card }) => {
   console.log('обновился массив товаров в заказе', orderData.basket );
 
   modal.close();
-  basketCounter.counter = orderData.getTotal();  
+  basketCounter.counter = orderData.getTotal();    
 
 });
 
@@ -323,8 +326,6 @@ events.on('order:submit', () => {
   const orderDetails = orderData.getOrder(); // Вызов функции getOrder
   console.log('это наш объект заказа', orderDetails); // Вывод результата в консоль
 
-
-
 });
 
 
@@ -422,6 +423,3 @@ modal.render({
 
 });
 */
-
-
-

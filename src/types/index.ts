@@ -114,6 +114,21 @@ export interface IOrderData { // это данные товаров и дейс�
     //deleteProduct(productId: string, payload: Function | null): void;
 }
 
+export interface IOrderSendData { // это данные товаров и действия, которые мы можем с ними выполнять
+    basket: IProduct[];
+    address: string;
+    payment: string;
+    email: string;
+    phone: string;
+}
+
+export interface IResponse { // это данные товаров и действия, которые мы можем с ними выполнять
+    id: string;
+    total: number;
+    success: string;
+    message: string;
+}
+
 
 
 
