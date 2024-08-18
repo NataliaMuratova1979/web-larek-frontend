@@ -332,29 +332,31 @@ events.on('order:send', () => {
   console.log('это наш объект заказа', orderToSend); 
   console.log(orderToSend.total);
 
-      api.postOrder(orderToSend)
-        .then((result) => { 
-        console.log('что происходит пocле then')
-         const success =  new Success(cloneTemplate(successTemplate),
-         
-            {
-              onClick: () => {
-                console.log('что происходит в onClick ');
-                modal.close();
-                orderData.clearOrder();
-                events.emit('order:sent');                
-                basketCounter.counter = 0;
-                }
-            });
+  api.postOrder(orderToSend)
+  .then((result) => { 
+    console.log('что происходит пocле then');
 
-            modal.render({
-              content: success.render({
-                 total: orderToSend.total
-              })
-            });
-          })
-          .catch(err => {
-            console.error(err);
-          })
+    // Выполняем действия перед созданием экземпляра Success
+    orderData.clearOrder();
+    events.emit('order:sent');                
+    basketCounter.counter = 0;
 
+    // Создаем экземпляр класса Success
+    const success = new Success(cloneTemplate(successTemplate), {
+      onClick: () => {
+        console.log('что происходит в onClick ');
+        modal.close();
+      }
+    });
+
+    // Рендерим модальное окно
+    modal.render({
+      content: success.render({
+        total: orderToSend.total
+      })
+    });
+  })
+  .catch(err => {
+    console.error(err);
+  });
 });
