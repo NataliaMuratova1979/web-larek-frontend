@@ -1,11 +1,11 @@
 import { Component } from "./base/Component";
 import { IEvents } from "./base/events";
+import { cloneTemplate, ensureElement } from '../utils/utils';
+
 
 interface IBasketCounter {
     counter: number;
 }
-
-//"header__container"
 
 export class BasketCounter extends Component<IBasketCounter>{
     protected _counter: HTMLElement;
@@ -15,12 +15,15 @@ export class BasketCounter extends Component<IBasketCounter>{
         super(container);
         this.events = events;
         
-        this._counter = this.container.querySelector('.header__basket-counter');
+        this._counter = ensureElement<HTMLElement>('.header__basket-counter', this.container);
 
         this.container.addEventListener('click', () => this.events.emit('basket:open', { basket: this}))
     }
 
     set counter(quantity: number) {
-        this._counter.textContent = quantity.toString();
+        this.setText(this._counter, quantity.toString());
     }
 }
+
+
+

@@ -1,4 +1,6 @@
 import { Component } from "./base/Component";
+import { cloneTemplate, ensureElement } from '../utils/utils';
+
 
 import { IEvents } from "./base/events";
 
@@ -17,8 +19,8 @@ export class Success extends Component<ISuccess> {
     constructor(container: HTMLElement, actions: ISuccessActions) {
         super(container);
 
-        this._close = this.container.querySelector('.order-success__close');
-        this._total = this.container.querySelector('.order-success__description');
+        this._close = ensureElement<HTMLButtonElement>('.order-success__close', container);
+        this._total = ensureElement<HTMLElement>('.order-success__description', container);
 
         if (actions?.onClick) {
             this._close.addEventListener('click', actions.onClick);

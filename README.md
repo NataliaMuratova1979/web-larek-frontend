@@ -57,19 +57,20 @@ yarn build
         price: number;
         ordered: boolean;
     }
-    
-2. Это объект - Корзина, изначально он пустой. Мы можем добавлять и удалять товары, выбирать товар по id
- interface IBasket {
-    items: IProduct[]; 
-    preview: string | null;
-    total: IProductOrderPrice[];
-    addProduct(product: IProduct): void;
-    deleteProduct(productId: string, payload: Function | null): void;
-    getProduct(productId: string): IProduct;
-    getTotal( IProductOrderPrice[] ): 
-}
 
-3. Это объект - Данные пользователя, которые мы будем вводить в форму, валидировать  и передавать на сервер
+2. Это объект - Заказ, изначально он пустой. Мы будем отраправлять его на сервер.
+ interface IOrderData {
+        basket: IProduct[];
+        userContacts: IUserContacts;
+        userPayment: IUserPayment;    
+    }
+
+
+
+    
+
+    
+2. Это объект - Данные пользователя, которые мы будем вводить в форму, валидировать  и передавать на сервер
  interface IUserData {
     payment: string;
     email: string;
@@ -79,13 +80,7 @@ yarn build
     checkValidation(data: Record<keyof IOrderFormData, string>): boolean;
 }
 
-4. Это объект - Заказ, изначально он пустой. Мы будем отраправлять его на сервер.
- interface IOrder {
-    data: IUserData;
-    items: IBasket; // это массив карточек, добавленных в корзинку
-    setOrder(): // тут собираем все данные для отправления заказа на сервер
-    getOrder(): // метод возвращает данные, полученные с сервера после успешной отправки заказа
-}
+
      
     // Коллекция, каталог товаров
 5. interface IProductData { // это данные товаров и действия, которые мы можем с ними выполнять

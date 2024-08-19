@@ -1,13 +1,11 @@
 
-import { ensureElement, cloneTemplate } from "../utils/utils";
+import { cloneTemplate, ensureElement } from '../utils/utils';
 import { Component } from "./base/Component";
 //import { Component } from "./Component";
 
 import { IEvents } from "./base/events";
 import { IProductsData, IProduct } from "../types";
 import { CDN_URL } from "../utils/constants";
-
-
 
 export class Card extends Component<IProduct> {
     
@@ -41,11 +39,12 @@ export class Card extends Component<IProduct> {
         this._deleteButton = this.container.querySelector('.basket__item-delete');
         this._basketButton = this.container.querySelector('.button.card__button');
 
+        this._title = ensureElement<HTMLElement>('.card__title', this.container);
+        this._price = ensureElement<HTMLElement>('.card__price', this.container);
+
         this._image = this.container.querySelector('.card__image');
         this._category = this.container.querySelector('.card__category');
-        this._title = this.container.querySelector('.card__title');
         this._description = this.container.querySelector('.card__text');
-        this._price = this.container.querySelector('.card__price');
         this._index = this.container.querySelector('.basket__item-index');
 
 
@@ -92,13 +91,13 @@ export class Card extends Component<IProduct> {
    
     set price(price: number | null) {
         // Сохраняем текущее значение цены
-        this._priceValue = price; // Предполагается, что вы добавили это свойство
+        this._priceValue = price; 
     
         if (price !== null) {
-            this._price.textContent = price.toString() + ' синапсов';
+            this.setText(this._price, price.toString() + ' синапсов');
             this._isBasketButtonDisabled = false; // Кнопка активна
         } else {
-            this._price.textContent = 'Бесценно';
+            this.setText(this._price, 'Бесценно');
             this._isBasketButtonDisabled = true; // Кнопка неактивна
         }
         
@@ -118,7 +117,7 @@ export class Card extends Component<IProduct> {
     
     set index(index: number) {
         if (this._index) {
-        this._index.textContent = index.toString();
+        this.setText(this._index, index);
     }
     }
 
@@ -131,7 +130,7 @@ export class Card extends Component<IProduct> {
     }    
 
     set title (title: string) {
-        this._title.textContent = title;
+        this.setText(this._title, title);
     }  
 
     set image(url: string) {
@@ -141,7 +140,7 @@ export class Card extends Component<IProduct> {
        
     set description(description: string) {
         if (this._description) {
-        this._description.textContent = description;
+        this.setText(this._description, description);
     }
     }  
 
@@ -151,8 +150,10 @@ export class Card extends Component<IProduct> {
             this._category.classList.remove('card__category_other', 'card__category_soft', 'card__category_hard', 'card__category_additional', 'card__category_button');
     
             // Устанавливаем текст
-            this._category.textContent = category;
-    
+            this._category.textContent = category;      
+                        
+            this.setText(this._category, category);
+            
             // Добавляем класс в зависимости от значения category
             switch (category) {
                 case 'другое':

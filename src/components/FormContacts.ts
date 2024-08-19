@@ -1,5 +1,6 @@
 // Это класс отображения второй формы 
 
+import { cloneTemplate, ensureElement } from '../utils/utils';
 
 import { Component } from "./base/Component";
 import { createElement } from "../utils/utils";
@@ -19,8 +20,8 @@ export class FormContacts<T> extends Component<IFormState> {
     constructor (protected container: HTMLFormElement, protected events: IEvents) {
         super(container); 
 
-        this._submit = this.container.querySelector('button[type=submit]');
-        this._errors = this.container.querySelector('.form__errors');
+        this._submit = ensureElement<HTMLButtonElement>('button[type=submit]', this.container);
+        this._errors = ensureElement<HTMLElement>('.form__errors', this.container);
 
         this.container.addEventListener('input', (e: Event) => {
             const target = e.target as HTMLInputElement;

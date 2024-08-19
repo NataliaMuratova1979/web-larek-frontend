@@ -9,7 +9,7 @@ export interface IProduct { // Это объект - Товар, который 
         blocked?: boolean;
 }
 
-export interface IData {
+export interface IData { // используется в AppApi
     total: number;
     items: IProduct[]
 }
@@ -41,29 +41,10 @@ export interface IContactsForm {
     phone: string;
 }
 
-//export type IProductCard = Pick<IProductServerData, 'id' | 'image'| 'title' | 'category' | 'price' | 'description'>
-
-
-
-
-/*
-export interface IToDoServerData {
-    id: number;
-    title: string;
-    completed: boolean;
-    userId: number;
-  }
-
-export type IToDoItem = Pick<IToDoServerData, 'id' | 'title' | 'completed'>
-*/
-
-
-
-
 export interface IBasket {
     items: IProduct[]; 
     preview: string | null; // указатель на тот товар, который мы хотим посмотреть 
-    total: IProductOrderPrice[];
+    //total: IProductOrderPrice[];
     addProduct(product: IProduct): void;
     deleteProduct(productId: string, payload: Function | null): void;
     getProduct(productId: string): IProduct;
@@ -124,26 +105,14 @@ export interface IOrderSendData { // это данные товаров и де�
 }
 
 
-
-
-
 export interface IResponse { // это данные товаров и действия, которые мы можем с ними выполнять
     id: string;
     total: number;
 }
 
-
-    
-    export type IProductMainPage = Pick<IProduct, 'image' | 'title' | 'category' | 'price'>
-    
-    export type IProductPopup = Pick<IProduct, 'image' | 'title' | 'category' | 'price' | 'description'>
-    
-    export type IProductToAdd = Pick<IProduct, 'id' | 'title' | 'price' >
-     
-    export type IProductOrderPrice = Pick<IProduct, 'price'> // Здесь должна быть цена выбранного товара
-    
-   // export type IOrderFormData = Pick<IOrder, 'payment' | 'address' | 'email' | 'phone'> // Данные, вводимые в формы при оформлении заказа
-    
-    //export type IOrderProducts = Pick<IOrder, 'items'> // Список товаров, добавленных в корзину
-    
-    
+/*
+interface IBasketView { // Используется в классе IBasket для отображения корзины
+    items: HTMLElement[];
+    total: number;
+}
+*/

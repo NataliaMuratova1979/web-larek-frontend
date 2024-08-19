@@ -14,6 +14,8 @@ import { Api } from './components/base/api';
 import { IApi } from './types';
 import { IPaymentForm, IContactsForm } from './types';
 
+import { Page } from './components/Page'; // отображение - одна карточка
+
 import { Card } from './components/Card'; // отображение - одна карточка
 import { CardsContainer } from './components/CardsContainer'; // отображение - контейнер с карточками 
 import { BasketCounter } from './components/BasketCounter'; // отображение - цифра на корзинке
@@ -24,7 +26,6 @@ import { Basket } from './components/Basket'; // отображение - отк
 import { cloneTemplate, ensureElement } from './utils/utils';
 import { settings } from './utils/constants';
 import { API_URL } from './utils/constants';
-
 
 
 const events = new EventEmitter();
@@ -55,41 +56,43 @@ promise
 // ---------------- Глобальные контейнеры и шаблоны ---------------- //
 
 
-const cardTemplate: HTMLTemplateElement = document.querySelector('#card-catalog'); // шаблон карточки в каталоге на главной странице
+const cardTemplate: HTMLTemplateElement = ensureElement<HTMLTemplateElement>('#card-catalog'); // шаблон карточки в каталоге на главной странице
 
-const cardModalTemplate: HTMLTemplateElement = document.querySelector('#card-preview'); // шаблон карточки в превью
+const cardModalTemplate: HTMLTemplateElement = ensureElement<HTMLTemplateElement>('#card-preview'); // шаблон карточки в превью
 
 const galleryContainer = new CardsContainer(
-  document.querySelector('.gallery'), events
+  ensureElement<HTMLTemplateElement>('.gallery'), events
 ); // контейнер галерея карточек на главной странице
 
 const orderData = new OrderData(events); //данные товара попадают сразу в заказ в корзине
 orderData.basket = []; // инициируем пустой массив для будущих товаров
 
-const page = document.querySelector('.page');
+//const page = ensureElement<HTMLTemplateElement>('.page');
+const page = new Page(document.body, events);
+
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
-const basketTemplate: HTMLTemplateElement = document.querySelector('#basket'); // это клон темплейта всей корзины
+const basketTemplate: HTMLTemplateElement = ensureElement<HTMLTemplateElement>('#basket'); // это клон темплейта всей корзины
 
 const basket = new Basket(cloneTemplate(basketTemplate), events); // Это экземпляр класса  Basket, с его помощью будем отображать список товаров корзины, кнопку оформить и общую сумму
 
-const cardBasketTemplate: HTMLTemplateElement = document.querySelector('#card-basket');  // шаблон карточки внутри корзины  
+const cardBasketTemplate: HTMLTemplateElement = ensureElement<HTMLTemplateElement>('#card-basket');  // шаблон карточки внутри корзины  
 
-const basketCounter = new BasketCounter(document.querySelector('.header__basket'), events);
+const basketCounter = new BasketCounter(ensureElement<HTMLTemplateElement>('.header__basket'), events);
 
 const paymentFormTemplate: HTMLTemplateElement =
-	document.querySelector('#order'); 
+ensureElement<HTMLTemplateElement>('#order'); 
   // шаблон первой формы способ оплаты и адрес доставки
 
 const payments = new Payment(cloneTemplate(paymentFormTemplate), events);
 
 const contactsFormTemplate: HTMLTemplateElement =
-	document.querySelector('#contacts'); 
+ensureElement<HTMLTemplateElement>('#contacts'); 
   // шаблон первой формы способ оплаты и адрес доставки
 
 const contacts = new Contacts(cloneTemplate(contactsFormTemplate), events);
 
-const successTemplate: HTMLTemplateElement = document.querySelector('#success'); 
+const successTemplate: HTMLTemplateElement = ensureElement<HTMLTemplateElement>('#success'); 
 
 
 
@@ -191,7 +194,6 @@ events.on('order:make', () => {
 }
 )
 
-
 // открыть первую форму 
 
 events.on('formPayment:open', () => {
@@ -282,6 +284,20 @@ events.on('order:send', () => {
     console.error(err);
   });
 });
+
+
+// Блокируем прокрутку страницы если открыта модалка
+events.on('modal:open', () => {
+  page.locked = true;
+});
+
+// ... и разблокируем
+events.on('modal:close', () => {
+  page.locked = false;
+});
+
+
+
 
 
 // ---------- Господи, неужели все ---------- //
