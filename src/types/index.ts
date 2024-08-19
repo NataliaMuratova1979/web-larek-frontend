@@ -95,7 +95,7 @@ export interface IOrderData { // это данные товаров и дейс�
     //deleteProduct(productId: string, payload: Function | null): void;
 }
 
-export interface IOrderSendData { // это данные товаров и действия, которые мы можем с ними выполнять
+export interface IOrderSendData { // данные заказа, сформированные для отправки на сервер.
     payment: string;
     email: string;
     phone: string;
@@ -105,14 +105,8 @@ export interface IOrderSendData { // это данные товаров и де�
 }
 
 
-export interface IResponse { // это данные товаров и действия, которые мы можем с ними выполнять
+export interface IResponse { // это данные, получаемые с сервера после успешной отправки заказа 
     id: string;
     total: number;
 }
 
-/*
-interface IBasketView { // Используется в классе IBasket для отображения корзины
-    items: HTMLElement[];
-    total: number;
-}
-*/

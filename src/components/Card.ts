@@ -42,10 +42,10 @@ export class Card extends Component<IProduct> {
         this._title = ensureElement<HTMLElement>('.card__title', this.container);
         this._price = ensureElement<HTMLElement>('.card__price', this.container);
 
-        this._image = this.container.querySelector('.card__image');
-        this._category = this.container.querySelector('.card__category');
-        this._description = this.container.querySelector('.card__text');
-        this._index = this.container.querySelector('.basket__item-index');
+        this._image = this.container.querySelector('.card__image'); // ensureElement не работает
+        this._category = this.container.querySelector('.card__category'); // ensureElement не работает
+        this._description = this.container.querySelector('.card__text'); // ensureElement не работает
+        this._index = this.container.querySelector('.basket__item-index'); // ensureElement не работает
 
 
         if (this._basketButton) {
